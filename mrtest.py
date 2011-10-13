@@ -2,7 +2,7 @@ from dumbo import identityreducer
 
 
 def mapper(k, v):
-    yield k, (len(v), v)
+    yield "key: (%s)" % k, "value: (%s)" % v 
 
 if __name__ == '__main__':
     import dumbo
