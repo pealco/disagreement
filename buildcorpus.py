@@ -39,7 +39,7 @@ class Mapper():
         words = body.split("\n")
         
         for word in words:
-        
+            yield article, words
             if word[0] == "<":
                 if word == "<s>":
                     self.sentence = []
