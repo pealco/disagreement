@@ -38,7 +38,7 @@ class Mapper():
         self.article = article
         lines = body.split("\n")
         
-        yield self.article, len(lines)
+        yield self.article, lines[0]
         
         #for line in lines:
         #    if line[0] == "<":
