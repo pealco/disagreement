@@ -39,7 +39,7 @@ class Mapper():
         lines = body.split("\\n")
         
         if lines[0] not in ["<s>"]:
-            yield *, 1
+            yield "*", 1
                 
         #for line in lines:
         #    if line[0] == "<":
