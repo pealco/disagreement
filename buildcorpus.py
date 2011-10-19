@@ -38,7 +38,7 @@ class Mapper():
         self.article = article
         lines = body.split("\\n")
         
-        if lines[0] not in ["<s>"]:
+        if lines[0] in ["<s>"]:
             yield "*", 1
                 
         #for line in lines:
