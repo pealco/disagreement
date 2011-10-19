@@ -69,5 +69,5 @@ class Mapper():
 if __name__ == '__main__':
     import dumbo
     job = dumbo.Job()
-    job.additer(Mapper, sumreducer)
+    job.additer(Mapper, identityreducer)
     job.run()
