@@ -37,32 +37,35 @@ class Mapper():
     def __call__(self, article, body):
         self.article = article
         lines = body.split("\\n")
+        
+        if lines[0] not in ["<s>"]:
+            yield article, lines
                 
-        for line in lines:
-            if line[0] == "<":
-                if line == "<s>":
-                    self.sentence = []
-                    return
-                if line == "</s>":
-                    sentence = [line.split("\t") for line in self.sentence]
-                    sentence = ["\t".join([w[0], w[2], w[4], w[5]]) + "\n" for w in sentence]
-                    sentence = "".join(sentence)
-                    dg = DependencyGraph(sentence)
-                    if dg.root["word"] in self.verbs and len(dg.nodelist) <= 15:
-                        verb = dg.root
-                        deps = self.root_dependencies(dg)
-                        subject = self.subject(dg)
-                        
-                        if len(subject) == 1:
-                            if not re.match(r".*[^a-z].*", subject[0]["word"].lower()):
-                                subject_deps = self.dependencies(dg, subject[0])
-                                if not any([node["tag"] == "CC" for node in dg.nodelist]) and not any([node["word"] == "percent" for node in dg.nodelist]):
-                                    if subject[0]["tag"] in ("NN", "NNS"): 
-                                        if (subject[0]["tag"] != self.expected_number[verb["word"]]):
-                                            yield self.article, self.plaintext(dg)
-                    return
-            
-            self.sentence += [line]
+        #for line in lines:
+        #    if line[0] == "<":
+        #        if line == "<s>":
+        #            self.sentence = []
+        #            return
+        #        if line == "</s>":
+        #            sentence = [line.split("\t") for line in self.sentence]
+        #            sentence = ["\t".join([w[0], w[2], w[4], w[5]]) + "\n" for w in sentence]
+        #            sentence = "".join(sentence)
+        #            dg = DependencyGraph(sentence)
+        #            if dg.root["word"] in self.verbs and len(dg.nodelist) <= 15:
+        #                verb = dg.root
+        #                deps = self.root_dependencies(dg)
+        #                subject = self.subject(dg)
+        #                
+        #                if len(subject) == 1:
+        #                    if not re.match(r".*[^a-z].*", subject[0]["word"].lower()):
+        #                        subject_deps = self.dependencies(dg, subject[0])
+        #                        if not any([node["tag"] == "CC" for node in dg.nodelist]) and not any([node["word"] == "percent" for node in dg.nodelist]):
+        #                            if subject[0]["tag"] in ("NN", "NNS"): 
+        #                                if (subject[0]["tag"] != self.expected_number[verb["word"]]):
+        #                                    yield self.article, self.plaintext(dg)
+        #            return
+        #    
+        #    self.sentence += [line]
     
 if __name__ == '__main__':
     import dumbo
