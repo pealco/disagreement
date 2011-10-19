@@ -36,7 +36,7 @@ class Mapper():
 
     def __call__(self, article, body):
         self.article = article
-        lines = body.split("\n")
+        lines = body.split("\\n")
         
         yield self.article, lines[0]
         
