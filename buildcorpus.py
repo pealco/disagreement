@@ -62,7 +62,7 @@ class Mapper():
                                             yield self.article, self.plaintext(dg)
                     return
             
-            self.sentence += [word]
+            self.sentence += [line]
     
 if __name__ == '__main__':
     import dumbo
