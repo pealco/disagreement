@@ -39,7 +39,7 @@ class Mapper():
         lines = body.split("\\n")
         
         if lines[0] not in ["<s>"]:
-            yield article, lines
+            yield article, 1
                 
         #for line in lines:
         #    if line[0] == "<":
@@ -70,5 +70,5 @@ class Mapper():
 if __name__ == '__main__':
     import dumbo
     job = dumbo.Job()
-    job.additer(Mapper, identityreducer)
+    job.additer(Mapper, sumreducer)
     job.run()
