@@ -40,11 +40,11 @@ class Mapper():
         new_sentence = []
         for word in sentence[1:-1]:
             columns = word.split("\t")
-            print >> sys.stderr, (columns[0], columns[2], columns[4], columns[5])
             new_columns = [columns[0], columns[2], columns[4], columns[5]]
             new_sentence += ["\t".join(new_columns)]
         
         s = "\n".join(new_sentence)
+        print >> sys.stderr, s
         
         #s = "\n".join(["\t".join([c[0], c[2], c[4], c[5]]) for c in [word.split("\t") for word in sentence[1:-1]]])
         #dg = DependencyGraph(s)
