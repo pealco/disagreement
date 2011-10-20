@@ -41,7 +41,10 @@ class Mapper():
         new_sentence = []
         for word in sentence[1:-1]:
             columns = word.split("\t")
-            new_columns = [columns[0], columns[2], columns[4], columns[5]]
+            try:
+                new_columns = [columns[0], columns[2], columns[4], columns[5]]
+            except IndexError:
+                return                
             new_sentence += ["\t".join(new_columns)]
         
         s = "\n".join(new_sentence)
