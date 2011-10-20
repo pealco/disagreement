@@ -49,24 +49,19 @@ class Mapper():
         dg = DependencyGraph(s)
         
         print >> sys.stderr, self.plaintext(dg)
-        verb = dg.root
-        deps = self.root_dependencies(dg)
-        subject = self.subject(dg)[0]
-        print >> sys.stderr, subject
 
         if dg.root["word"] in self.verbs and len(dg.nodelist) <= 15:
-            pass
-        #    verb = dg.root
-        #    deps = self.root_dependencies(dg)
-        #    subject = self.subject(dg)
-        #    
-        #    if len(subject) == 1:
-        #        if not re.match(r".*[^a-z].*", subject[0]["word"].lower()):
-        #            subject_deps = self.dependencies(dg, subject[0])
-        #            if not any([node["tag"] == "CC" for node in dg.nodelist]) and not any([node["word"] == "percent" for node in dg.nodelist]):
-        #                if subject[0]["tag"] in ("NN", "NNS"): 
-        #                    if (subject[0]["tag"] != self.expected_number[verb["word"]]):
-        #                        yield self.article, self.plaintext(dg)
+            verb = dg.root
+            deps = self.root_dependencies(dg)
+            subject = self.subject(dg)
+            
+            if len(subject) == 1:
+                if not re.match(r".*[^a-z].*", subject[0]["word"].lower()):
+                    subject_deps = self.dependencies(dg, subject[0])
+                    if not any([node["tag"] == "CC" for node in dg.nodelist]) and not any([node["word"] == "percent" for node in dg.nodelist]):
+                        if subject[0]["tag"] in ("NN", "NNS"): 
+                            if (subject[0]["tag"] != self.expected_number[verb["word"]]):
+                                yield self.article, self.plaintext(dg)
         
 if __name__ == '__main__':
     import dumbo
