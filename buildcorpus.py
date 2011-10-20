@@ -51,7 +51,7 @@ class Mapper():
         print >> sys.stderr, self.plaintext(dg)
         verb = dg.root
         deps = self.root_dependencies(dg)
-        subject = self.subject(dg)
+        subject = self.subject(dg)[0]
         print >> sys.stderr, subject
 
         if dg.root["word"] in self.verbs and len(dg.nodelist) <= 15:
