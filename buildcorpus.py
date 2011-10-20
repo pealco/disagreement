@@ -44,10 +44,10 @@ class Mapper():
             new_sentence += ["\t".join(new_columns)]
         
         s = "\n".join(new_sentence)
-        print >> sys.stderr, s
-        
+                
         #s = "\n".join(["\t".join([c[0], c[2], c[4], c[5]]) for c in [word.split("\t") for word in sentence[1:-1]]])
-        #dg = DependencyGraph(s)
+        dg = DependencyGraph(s)
+        print >> sys.stderr, dg
         #if dg.root["word"] in self.verbs and len(dg.nodelist) <= 15:
         #    verb = dg.root
         #    deps = self.root_dependencies(dg)
