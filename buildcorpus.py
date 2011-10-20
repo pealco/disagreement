@@ -15,8 +15,6 @@ from dumbo.lib import *
 class Mapper():
     def __init__(self):
         
-        self.sentence = []
-        self.article = ""
         self.verbs = ["is", "are", "was", "were"]
         self.expected_number = {"was": "NN",
                                 "is" : "NN",
@@ -35,7 +33,6 @@ class Mapper():
         return [node for node in self.root_dependencies(dg) if node["rel"] == "SBJ"]
 
     def __call__(self, article, sentence):
-        self.article = article
         
         print >> sys.stderr, sentence
         new_sentence = []
