@@ -62,7 +62,7 @@ class Mapper():
                     if not any([node["tag"] == "CC" for node in dg.nodelist]) and not any([node["word"] == "percent" for node in dg.nodelist]):
                         if subject[0]["tag"] in ("NN", "NNS"): 
                             if (subject[0]["tag"] != self.expected_number[verb["word"]]):
-                                yield self.article, self.plaintext(dg)
+                                yield article, self.plaintext(dg)
         
 if __name__ == '__main__':
     import dumbo
