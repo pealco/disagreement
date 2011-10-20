@@ -50,7 +50,7 @@ class Mapper():
         
         print >> sys.stderr, self.plaintext(dg)
         print >> sys.stderr, len(dg.nodelist)
-        print >> sys.stderr, dg.root["word"] in self.verbs
+        print >> sys.stderr, dg.root["word"] in self.verbs and len(dg.nodelist) <= 15
         if dg.root["word"] in self.verbs and len(dg.nodelist) <= 15:
             print >> sys.stderr, dg.root["word"] in self.verbs
             
