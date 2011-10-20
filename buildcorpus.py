@@ -49,10 +49,12 @@ class Mapper():
         dg = DependencyGraph(s)
         
         print >> sys.stderr, self.plaintext(dg)
-        print >> sys.stderr, len(dg.nodelist)
-        print >> sys.stderr, dg.root["word"] in self.verbs and len(dg.nodelist) <= 15
+        verb = dg.root
+        deps = self.root_dependencies(dg)
+        subject = self.subject(dg)
+        print >> sys.stderr, subject
+
         if dg.root["word"] in self.verbs and len(dg.nodelist) <= 15:
-            print >> sys.stderr, "HERE!!!!!!!!!!"
             
         #    verb = dg.root
         #    deps = self.root_dependencies(dg)
