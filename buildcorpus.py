@@ -39,8 +39,8 @@ class Mapper():
         
         new_sentence = []
         for word in sentence[1:-1]:
-            print >> sys.stderr, word.split("\t")
             columns = word.split("\t")
+            print >> sys.stderr, columns[0]
             new_columns = [columns[0], columns[2], columns[4], columns[5]]
             new_sentence += ["\t".join(new_columns)]
         
