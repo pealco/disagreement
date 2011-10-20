@@ -38,7 +38,7 @@ class Mapper():
         self.article = article
         
         if article[0] == "A":
-            sentence[1:-1]
+            yield article, sentence[1:-1]
         
         #s = "\n".join(["\t".join([c[0], c[2], c[4], c[5]]) for c in [word.split("\t") for word in sentence[1:-1]]])
         #dg = DependencyGraph(s)
