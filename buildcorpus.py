@@ -49,7 +49,7 @@ class Mapper():
                 
         dg = DependencyGraph(s)
         
-        if dg.root["word"] in self.verbs and len(dg.nodelist) <= 15:
+        if dg.root["word"] in self.verbs and len(dg.nodelist) <= 20:
             verb = dg.root
             deps = self.root_dependencies(dg)
             subject = self.subject(dg)
