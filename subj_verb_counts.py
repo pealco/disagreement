@@ -1,6 +1,6 @@
 # Pedro Alcocer
-# May 9, 2010
-# Finding agreement errors in Wikipedia using Hadoop
+#
+# Count subject-verb co-occurences.
 
 import sys
 from glob import glob
