@@ -36,8 +36,8 @@ class Mapper():
                 
         dg = DependencyGraph(s)
         
-        subject = self.subject(dg)["word"]
-        verb    = dg.root["word"]
+        subject = self.subject(dg)
+        verb    = dg.root
         
         yield (subject, verb), 1
         
