@@ -36,6 +36,7 @@ class Mapper():
                 
         dg = DependencyGraph(s)
         
+        print >> sys.stderr, self.subject(dg)
         subject = self.subject(dg)[0]["word"]
         verb    = dg.root["word"]
         
