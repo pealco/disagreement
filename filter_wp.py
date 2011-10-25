@@ -3,10 +3,7 @@ import hashlib
 
 def mapper(article, sentence):
     sentence = "\n".join(sentence)
-    
-    hash = hashlib.md5(sentence).hexdigest()    
-    
-    yield (article, hash), 1
+    yield (article, sentence), 1
 
 def filter_mapper(as_pair, count):
     article, sentence = as_pair
