@@ -19,7 +19,7 @@ def subject_node(dg):
     return [node for node in root_dependencies(dg) if node["rel"] == "SBJ"]
 
 def mapper(data):
-    H = defaultdict(int)
+    H = defaultdict(lambda: defaultdict(int))
 
     for article, dg in data:
         subject = subject_node(dg)[0]["word"]
