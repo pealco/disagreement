@@ -13,6 +13,10 @@ from nltk.parse import DependencyGraph
 from dumbo.lib import *
 
 class Mapper():
+    
+    def root_dependencies(self, dg): 
+        return [dg.get_by_address(node) for node in dg.root["deps"]]
+        
     def subject(self, dg):
         return [node for node in self.root_dependencies(dg) if node["rel"] == "SBJ"]
 
