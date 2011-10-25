@@ -36,11 +36,11 @@ class Mapper():
                 
         dg = DependencyGraph(s)
         
-        print >> sys.stderr, self.subject(dg)
-        subject = self.subject(dg)[0]["word"]
-        verb    = dg.root["word"]
+        if self.subject(dg):
+            subject = self.subject(dg)[0]["word"]
+            verb    = dg.root["word"]
         
-        yield (subject, verb), 1
+            yield (subject, verb), 1
         
 if __name__ == '__main__':
     import dumbo
