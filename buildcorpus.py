@@ -34,7 +34,7 @@ class Mapper():
 
     def __call__(self, article, sentence):
         
-        print >> sys.stderr, sentence
+        #print >> sys.stderr, sentence
         new_sentence = []
         for word in sentence[1:-1]:
             columns = word.split("\t")
@@ -50,7 +50,6 @@ class Mapper():
         dg = DependencyGraph(s)
         
         
-
         if dg.root["word"] in self.verbs and len(dg.nodelist) <= 15:
             verb = dg.root
             deps = self.root_dependencies(dg)
