@@ -22,7 +22,7 @@ class Mapper():
     def subject(self, dg):
         return [node for node in self.root_dependencies(dg) if node["rel"] == "SBJ"]
 
-    def __call__(self, data):
+    def __call__(self, article, sentence):
         
         new_sentence = []
         sentence = sentence.split("\n")
