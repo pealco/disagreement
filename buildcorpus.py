@@ -36,6 +36,7 @@ class Mapper():
         
         #print >> sys.stderr, sentence
         new_sentence = []
+        sentence = sentence.split("\n")
         for word in sentence[1:-1]:
             columns = word.split("\t")
             try:
@@ -46,9 +47,7 @@ class Mapper():
         
         s = "\n".join(new_sentence)
                 
-        #s = "\n".join(["\t".join([c[0], c[2], c[4], c[5]]) for c in [word.split("\t") for word in sentence[1:-1]]])
         dg = DependencyGraph(s)
-        
         
         if dg.root["word"] in self.verbs and len(dg.nodelist) <= 15:
             verb = dg.root
