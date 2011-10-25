@@ -24,34 +24,27 @@ class Mapper():
 
     def __call__(self, data):
         
-        H = defaultdict(int)
+        new_sentence = []
+        sentence = sentence.split("\n")
+        for word in sentence[1:-1]:
+            columns = word.split("\t")
+            try:
+                new_columns = [columns[0], columns[2], columns[4], columns[5]]
+            except IndexError:
+                return                
+            new_sentence += ["\t".join(new_columns)]
         
-        for article, sentence in data:
-            print >> sys.stderr, (article, sentence)
+        s = "\n".join(new_sentence)
+                
+        dg = DependencyGraph(s)
         
-            new_sentence = []
-            sentence = sentence.split("\n")
-            for word in sentence[1:-1]:
-                columns = word.split("\t")
-                try:
-                    new_columns = [columns[0], columns[2], columns[4], columns[5]]
-                except IndexError:
-                    return                
-                new_sentence += ["\t".join(new_columns)]
-            
-            s = "\n".join(new_sentence)
-                    
-            dg = DependencyGraph(s)
-            
-            if self.subject(dg):
-                subject = self.subject(dg)[0]["word"]
-                verb    = dg.root["word"]
-            
-                H[(subject, verb)] += 1
-                H[("*", verb)] += 1
+        if self.subject(dg):
+            subject = self.subject(dg)[0]["word"]
+            verb    = dg.root["word"]
         
-        for pair in H:
-            yield pair, H[pair]
+            yield (subject, verb), 1
+            yield ("*", verb), 1
+        
         
 if __name__ == '__main__':
     import dumbo
