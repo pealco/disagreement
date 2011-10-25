@@ -27,6 +27,7 @@ class Mapper():
         H = defaultdict(int)
         
         for article, sentence in data:
+            print >> sys.stderr, (article, sentence)
         
             new_sentence = []
             sentence = sentence.split("\n")
