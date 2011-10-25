@@ -1,8 +1,12 @@
 from dumbo import sumreducer
+import hashlib
 
-
-def mapper(k, v):
-    yield (k, v), 1
+def mapper(article, sentence):
+    sentence = "\n".join(sentence)
+    
+    hash = hashlib.md5(sentence).hexdigest()    
+    
+    yield (article, hash), 1
 
 if __name__ == '__main__':
     import dumbo
