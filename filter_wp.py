@@ -16,7 +16,8 @@ if __name__ == '__main__':
     import dumbo
     job = dumbo.Job()
     job.additer(mapper, sumreducer)
-    job.run(filtermapper, identityreducer)
+    job.additer(filter_mapper, identityreducer)
+    job.run()
 
 
 
