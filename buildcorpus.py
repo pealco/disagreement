@@ -21,6 +21,9 @@ class Mapper():
                                 "were": "NNS",
                                 "are" : "NNS"
                                 }
+        self.stop_nouns = ["number", "majority", "percent", "total", "none", "pair", "part", "km", "mm"
+                            "species", "series",
+                            "fish", "deer", "cattle"]
             
     def plaintext(self, dg):
         return " ".join([node["word"] for node in dg.nodelist[1:]])
