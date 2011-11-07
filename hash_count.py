@@ -8,11 +8,8 @@ from dumbo.lib import *
 
 def mapper(pair, freq):
     
-    subject_verb = pair[0] + "_" + pair[1]
-    
-    hash = hashlib.md5(subject_verb).hexdigest()
-    
-    yield hash, freq
+    subject_verb = pair[0] + "_" + pair[1]    
+    yield subject_verb, freq
     
 if __name__ == '__main__':
     import dumbo
