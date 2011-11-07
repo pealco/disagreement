@@ -62,15 +62,12 @@ class Mapper():
                 if not re.match(r".*[^a-z].*", subject[0]["word"].lower()):
                     subject_deps = self.dependencies(dg, subject[0])
                     if not any([node["tag"] == "CC" for node in dg.nodelist]) and not any([node["word"] == "percent" for node in dg.nodelist]):
-                        if subject[0]["tag"] in ("NN", "NNS"): 
+                        if subject[0]["tag"] in ("NN", "NNS"):
+                            subject_verb = subject[0]["word"] + "_" + verb["word"]
                             if (subject[0]["tag"] == self.expected_number[verb["word"]]):
-                                subject_verb = subject[0]["word"] + "_" + verb["word"]
-                                hash = hashlib.md5(subject_verb).hexdigest()
-                                yield hash, "gram"
+                                yield subject_verb , "gram"
                             elif (subject[0]["tag"] != self.expected_number[verb["word"]]):
-                                subject_verb = subject[0]["word"] + "_" + verb["word"]
-                                hash = hashlib.md5(subject_verb).hexdigest()
-                                yield hash, "ungram"
+                                yield subject_verb, "ungram"
         
 if __name__ == '__main__':
     import dumbo
