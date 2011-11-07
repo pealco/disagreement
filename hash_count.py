@@ -8,7 +8,7 @@ from dumbo.lib import *
 
 def mapper(pair, freq):
     
-    subject_verb = pair[0] + "_" + pair[1]    
+    subject_verb = pair[1] + "_" + pair[0]
     yield subject_verb, freq
     
 if __name__ == '__main__':
