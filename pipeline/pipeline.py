@@ -121,7 +121,7 @@ class modify_verb_tags():
         
         sentence_dg.root['tag'] = new_tag
         
-        yield article, sentence_dg
+        yield sentence_dg.root, retagged_sentence[root_address]
         
     
 # Output converters
