@@ -85,6 +85,8 @@ def preposition_filter(article, sentence_dg):
     subject = find_subject(sentence_dg)
     dependencies
 
+
+# Output converters
 def linecount(article, sentence_dg):
     yield "*", 1
 
@@ -96,6 +98,7 @@ if __name__ == '__main__':
     job = dumbo.Job()
     job.additer(remove_long_sentences,  identityreducer)
     job.additer(select_verbs,           identityreducer)
+    job.additer(stopword_filter,        identityreducer)
     job.additer(find_disagreement,      identityreducer)
     job.additer(wordnet_filter,         identityreducer)
     #job.additer(preposition_filter,      identityreducer)
