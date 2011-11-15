@@ -73,6 +73,14 @@ class wordnet_filter():
         if wn.synsets(subject):
             yield article, sentence_dg
 
+def stopword_filter(article, sentence_dg):
+    stop_nouns = ["number", "majority", "percent", "total", "none", "pair", "part", "km", "mm"
+                  "species", "series",
+                  "fish", "deer", "cattle", "sheep" "proginy"]
+    subject = find_subject(sentence_dg)
+    if subject not in stop_nouns:
+        yield article, sentence_dg
+
 def preposition_filter(article, sentence_dg):
     subject = find_subject(sentence_dg)
     dependencies
