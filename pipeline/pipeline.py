@@ -53,7 +53,7 @@ def find_disagreement(article, sentence_dg):
 
 def wordnet_filter(article, sentence_dg):
     """Yields only sentence with subjects that are in wordnet."""
-    subject = find_subject(dg)
+    subject = find_subject(sentence_dg)
     
     if wn.synsets(subject):
         yield article, sentence_dg
