@@ -117,9 +117,9 @@ class modify_verb_tags():
         retagged_sentence = self.retag(sentence_dg)
         
         root_address = sentence_dg.root['address']
-        word, new_tag = retagged_sentence[root_address]
+        #word, new_tag = retagged_sentence[root_address]
         
-        sentence_dg.root['tag'] = new_tag
+        #sentence_dg.root['tag'] = new_tag
         
         yield sentence_dg.root, retagged_sentence[root_address]
         
