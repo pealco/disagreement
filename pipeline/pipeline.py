@@ -23,12 +23,14 @@ EXPECTED_NUMBER = { "was": "NN",
 
 
 
-def root_dependencies(self, dg): return [dg.get_by_address(node) for node in dg.root["deps"]]
+def root_dependencies(dg): 
+    return [dg.get_by_address(node) for node in dg.root["deps"]]
 
-def dependencies(self, graph, node): return [graph.get_by_address(dep) for dep in graph.get_by_address(node["address"])["deps"]]
+def dependencies(graph, node): 
+    return [graph.get_by_address(dep) for dep in graph.get_by_address(node["address"])["deps"]]
 
-def find_subject(self, dg):
-    return [node for node in self.root_dependencies(dg) if node["rel"] == "SBJ"]
+def find_subject(dg):
+    return [node for node in root_dependencies(dg) if node["rel"] == "SBJ"]
     
 # Filters
 
@@ -45,7 +47,7 @@ def find_disagreement(article, sentence_dg):
     deps = root_dependencies(sentence_dg)
     subject = find_subject(sentence_dg)
     
-    if (subject[0]["tag"] != expected_number[verb["word"]]):
+    if subject[0]["tag"] in ("NN", "NNS") and (subject[0]["tag"] != expected_number[verb["word"]]):
         yield article, sentence_dg
 
 
