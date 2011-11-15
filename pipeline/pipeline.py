@@ -49,14 +49,13 @@ def select_verbs(article, sentence_dg):
     if sentence_dg.root["word"] in VERBS:
         yield article, sentence_dg
 
-class find_disagreement():
-    self.verb = sentence_dg.root
-    self.deps = root_dependencies(sentence_dg)
-    self.subject = find_subject(sentence_dg)
+def find_disagreement(article, sentence_dg):
+    verb = sentence_dg.root
+    deps = root_dependencies(sentence_dg)
+    subject = find_subject(sentence_dg)
     
-    def __call__(self, article, sentence_dg):
-        if self.subject[0]["tag"] in ("NN", "NNS") and (self.subject[0]["tag"] != EXPECTED_NUMBER[verb["word"]]):
-            yield article, sentence_dg
+    if subject[0]["tag"] in ("NN", "NNS") and (subject[0]["tag"] != EXPECTED_NUMBER[verb["word"]]):
+        yield article, sentence_dg
 
 class wordnet_filter():
     """Yields only sentence with subjects that are in wordnet."""
@@ -71,13 +70,16 @@ class wordnet_filter():
         if self.wn.synsets(subject):
             yield article, sentence_dg
 
-
+def preposition_filter(article, sentence_dg):
+    subject = find_subject(sentence_dg)
+    dependencies
 
 if __name__ == '__main__':
     import dumbo
     job = dumbo.Job()
-#    job.additer(remove_long_sentences,  identityreducer)
-#    job.additer(select_verbs,           identityreducer)
+    job.additer(remove_long_sentences,  identityreducer)
+    job.additer(select_verbs,           identityreducer)
     job.additer(find_disagreement,      identityreducer)
-#    job.additer(wordnet_filter,      identityreducer)
+#    job.additer(wordnet_filter,         identityreducer)
+#    job.additer(preposition_filter,      identityreducer)
     job.run()
