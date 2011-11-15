@@ -68,7 +68,7 @@ class wordnet_filter():
         
     def __call__(self, article, sentence_dg):
         subject = find_subject(sentence_dg)[0]["word"]
-        if self.wn.synsets(subject):
+        if wn.synsets(subject):
             yield article, sentence_dg
 
 def preposition_filter(article, sentence_dg):
