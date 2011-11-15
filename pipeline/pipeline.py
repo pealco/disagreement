@@ -1,6 +1,8 @@
 # Pedro Alcocer
 # May 9, 2010
 # Finding agreement errors in Wikipedia using Hadoop
+# Call with:
+# dumbo start pipeline.py -input /user/pealco/wikipedia_split_parsed_deduped_dgs  -output /user/pealco/disagreement_pipeline_test -overwrite yes -hadoop h -memlimit 4294967296 -numreducetasks 48 -file wordnet.zip
 
 import sys
 from glob import glob
@@ -9,7 +11,6 @@ sys.path.append("/fs/clip-software/python-contrib-2.7.1.0/lib/python2.7/site-pac
 
 import re
 from nltk.parse import DependencyGraph
-from nltk.corpus import wordnet as wn
 
 from dumbo.lib import *
 
@@ -51,9 +52,14 @@ def find_disagreement(article, sentence_dg):
     if subject[0]["tag"] in ("NN", "NNS") and (subject[0]["tag"] != EXPECTED_NUMBER[verb["word"]]):
         yield article, sentence_dg
 
-def wordnet_filter(article, sentence_dg):
+class Wordnet_filter:
     """Yields only sentence with subjects that are in wordnet."""
-    subject = find_subject(sentence_dg)
+    
+    def __init__(self):
+        wn = WordNetCorpusReader(nltk.data.find('wordnet.zip'))
+    
+    def __call__(self, article, sentence_dg):
+        subject = find_subject(sentence_dg)[0]["word"]
     
     if wn.synsets(subject):
         yield article, sentence_dg
