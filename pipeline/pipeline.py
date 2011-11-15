@@ -47,7 +47,7 @@ def find_disagreement(article, sentence_dg):
     deps = root_dependencies(sentence_dg)
     subject = find_subject(sentence_dg)
     
-    if subject[0]["tag"] in ("NN", "NNS") and (subject[0]["tag"] != expected_number[verb["word"]]):
+    if subject[0]["tag"] in ("NN", "NNS") and (subject[0]["tag"] != EXPECTED_NUMBER[verb["word"]]):
         yield article, sentence_dg
 
 
