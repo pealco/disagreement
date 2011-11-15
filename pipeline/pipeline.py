@@ -9,6 +9,7 @@ sys.path.append("/fs/clip-software/python-contrib-2.7.1.0/lib/python2.7/site-pac
 
 import re
 from nltk.parse import DependencyGraph
+from nltk.corpus import wordnet as wn
 
 from dumbo.lib import *
 
@@ -50,12 +51,20 @@ def find_disagreement(article, sentence_dg):
     if subject[0]["tag"] in ("NN", "NNS") and (subject[0]["tag"] != EXPECTED_NUMBER[verb["word"]]):
         yield article, sentence_dg
 
+def wordnet_filter(article, sentence_dg):
+    """Yields only sentence with subjects that are in wordnet."""
+    subject = find_subject(dg)
+    
+    if wn.synsets(subject):
+        yield article, sentence_dg
+
 
 
 if __name__ == '__main__':
     import dumbo
     job = dumbo.Job()
-    job.additer(remove_long_sentences,  identityreducer)
-    job.additer(select_verbs,           identityreducer)
-    job.additer(find_disagreement,      identityreducer)
+#    job.additer(remove_long_sentences,  identityreducer)
+#    job.additer(select_verbs,           identityreducer)
+#    job.additer(find_disagreement,      identityreducer)
+    job.additer(wordnet_filter,      identityreducer)
     job.run()
