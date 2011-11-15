@@ -24,11 +24,10 @@ from cPickle import load
 MAX_LENGTH = 20
 VERBS = ["is", "are", "was", "were"]
 
-EXPECTED_NUMBER = { "was": "NN",
-                    "is" : "NN",
-                    "were": "NNS",
-                    "are" : "NNS"
-                    }
+NUMBER = {  "VBZ" : "SG",
+            "VB"  : "PL",
+            "NN"  : "SG",
+            "NNS" : "PL" }
 
 
 
@@ -58,9 +57,12 @@ def find_disagreement(article, sentence_dg):
     verb = sentence_dg.root
     deps = root_dependencies(sentence_dg)
     subject = find_subject(sentence_dg)
+    subject_tag = subject[0]["tag"]
+    verb_tag = sentence_dg.root["tag"]
     
-    if subject[0]["tag"] in ("NN", "NNS") and (subject[0]["tag"] != EXPECTED_NUMBER[verb["word"]]):
-        yield article, sentence_dg
+    if subject_tag in ("NN", "NNS") and verb_tag in ("VB", "VBZ"):
+        if (NUMBER[subject_tag] != NUMBER[verb_tag]):
+            yield article, sentence_dg
 
 class wordnet_filter():
     """Yields only sentence with subjects that are in wordnet."""
