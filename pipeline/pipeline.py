@@ -37,6 +37,9 @@ def dependencies(graph, node):
 
 def find_subject(dg):
     return [node for node in root_dependencies(dg) if node["rel"] == "SBJ"]
+
+def plaintext(dg):
+    return " ".join([node["word"] for node in dg.nodelist[1:]])
     
 # Filters
 
@@ -77,13 +80,17 @@ def preposition_filter(article, sentence_dg):
 def linecount(article, sentence_dg):
     yield "*", 1
 
+def convert_to_plaintext(article, sentence_dg):
+    yield article, plaintext(sentence_dg)
+
 if __name__ == '__main__':
     import dumbo
     job = dumbo.Job()
-    job.additer(remove_long_sentences,  identityreducer)
-    job.additer(select_verbs,           identityreducer)
-    job.additer(find_disagreement,      identityreducer)
+    #job.additer(remove_long_sentences,  identityreducer)
+    #job.additer(select_verbs,           identityreducer)
+    #job.additer(find_disagreement,      identityreducer)
     job.additer(wordnet_filter,         identityreducer)
     #job.additer(preposition_filter,      identityreducer)
-    job.additer(linecount, sumreducer, combiner=sumreducer)
+    job.additer(convert_to_plaintext,   identityreducer)
+    #job.additer(linecount, sumreducer, combiner=sumreducer)
     job.run()
