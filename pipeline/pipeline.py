@@ -13,8 +13,7 @@ import re
 
 import nltk
 from nltk.parse import DependencyGraph
-from nltk.corpus.reader import wordnet
-from nltk.corpus.reader import WordNetCorpusReader
+from nltk.corpus import wordnet as wn
 
 from dumbo.lib import *
 
@@ -64,7 +63,7 @@ class wordnet_filter():
         nltk.data.path += ["/fs/clip-software/nltk-2.0b9-data"]
         nltk.data.path += [os.getcwd()]
         #wn = WordNetCorpusReader(nltk.data.find('wordnet.zip'))
-        from nltk.corpus import wordnet as wn
+        
         
     def __call__(self, article, sentence_dg):
         subject = find_subject(sentence_dg)[0]["word"]
