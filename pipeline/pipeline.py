@@ -63,8 +63,9 @@ class wordnet_filter():
     def __init__(self):
         nltk.data.path += ["/fs/clip-software/nltk-2.0b9-data"]
         nltk.data.path += [os.getcwd()]
-        wn = WordNetCorpusReader(nltk.data.find('wordnet.zip'))
-    
+        #wn = WordNetCorpusReader(nltk.data.find('wordnet.zip'))
+        from nltk.corpus import wordnet as wn
+        
     def __call__(self, article, sentence_dg):
         subject = find_subject(sentence_dg)[0]["word"]
         if self.wn.synsets(subject):
