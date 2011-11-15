@@ -74,6 +74,9 @@ def preposition_filter(article, sentence_dg):
     subject = find_subject(sentence_dg)
     dependencies
 
+def linecount(article, sentence_dg):
+    yield "*", 1
+
 if __name__ == '__main__':
     import dumbo
     job = dumbo.Job()
@@ -82,4 +85,5 @@ if __name__ == '__main__':
 #    job.additer(find_disagreement,      identityreducer)
     job.additer(wordnet_filter,         identityreducer)
 #    job.additer(preposition_filter,      identityreducer)
+    job.additer(linecount, sumreducer, combiner=sumreducer)
     job.run()
