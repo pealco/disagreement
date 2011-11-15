@@ -88,9 +88,12 @@ def root_is_verb_filter(article, sentence_dg):
 
 def preposition_filter(article, sentence_dg):
     subject = find_subject(sentence_dg)
-    dependencies
+    subject_deps = subject[0]['deps']
+    if any([sentence_dg.get_by_address(dep)['tag'] == 'IN' for dep in subject_deps]):
+        yield article, sentence_dg
 
 def cc_in_subject_filter(article, sentence_dg):
+    """ The subject should not contain coordination."""
     subject = find_subject(sentence_dg)
     subject_deps = subject[0]['deps']
     if not any([sentence_dg.get_by_address(dep)['tag'] == 'CC' for dep in subject_deps]):
@@ -109,11 +112,11 @@ if __name__ == '__main__':
     #job.additer(remove_long_sentences,  identityreducer)
     #job.additer(select_verbs,           identityreducer)
     #job.additer(stopword_filter,        identityreducer)
-    job.additer(root_is_verb_filter,    identityreducer)
+    #job.additer(root_is_verb_filter,    identityreducer)
+    #job.additer(cc_in_subject_filter,   identityreducer)    
     #job.additer(find_disagreement,      identityreducer)
-    job.additer(cc_in_subject_filter,   identityreducer)
     #job.additer(wordnet_filter,         identityreducer)
-    #job.additer(preposition_filter,      identityreducer)
+    job.additer(preposition_filter,      identityreducer)
     job.additer(convert_to_plaintext,   identityreducer)
     #job.additer(linecount, sumreducer, combiner=sumreducer)
     job.run()
