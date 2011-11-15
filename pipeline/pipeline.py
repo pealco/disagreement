@@ -2,7 +2,7 @@
 # May 9, 2010
 # Finding agreement errors in Wikipedia using Hadoop
 # Call with:
-# dumbo start pipeline.py -input /user/pealco/wikipedia_split_parsed_deduped_dgs  -output /user/pealco/disagreement_pipeline_test -overwrite yes -hadoop h -memlimit 4294967296 -numreducetasks 100 -file braubt_tagger.pkl
+# dumbo start pipeline.py -input /user/pealco/wikipedia_split_parsed_deduped_dgs  -output /user/pealco/disagreement_pipeline_filtered -overwrite yes -hadoop h -memlimit 4294967296 -numreducetasks 100 -file braubt_tagger.pkl
 
 import os, sys
 from glob import glob
@@ -25,10 +25,10 @@ MAX_LENGTH = 20
 VERBS = ["is", "are", "was", "were"]
 
 NUMBER = {  "VBZ" : "SG",
+            "VBP" : "PL",
             "VB"  : "PL",
             "NN"  : "SG",
             "NNS" : "PL" }
-
 
 
 def root_dependencies(dg): 
@@ -54,29 +54,20 @@ def select_verbs(article, sentence_dg):
         yield article, sentence_dg
 
 def find_disagreement(article, sentence_dg):
-    verb = sentence_dg.root
-    deps = root_dependencies(sentence_dg)
     subject = find_subject(sentence_dg)
     subject_tag = subject[0]["tag"]
+    verb = sentence_dg.root
     verb_tag = sentence_dg.root["tag"]
     
-    if subject_tag in ("NN", "NNS") and verb_tag in ("VB", "VBZ"):
-        if (NUMBER[subject_tag] != NUMBER[verb_tag]):
+    if subject_tag in NUMBER and verb_tag in NUMBER:
+        if NUMBER[subject_tag] != NUMBER[verb_tag]:
             yield article, sentence_dg
 
-class wordnet_filter():
-    """Yields only sentence with subjects that are in wordnet."""
-    
-    def __init__(self):
-        nltk.data.path += ["/fs/clip-software/nltk-2.0b9-data"]
-        nltk.data.path += [os.getcwd()]
-        #wn = WordNetCorpusReader(nltk.data.find('wordnet.zip'))
-        
-        
-    def __call__(self, article, sentence_dg):
-        subject = find_subject(sentence_dg)[0]["word"]
-        if wn.synsets(subject):
-            yield article, sentence_dg
+def wordnet_filter(article, sentence_dg):
+    """Yields only sentence with subjects that are in wordnet."""    
+    subject = find_subject(sentence_dg)[0]["word"]
+    if wn.synsets(subject):
+        yield article, sentence_dg
 
 def stopword_filter(article, sentence_dg):
     stop_nouns = ["number", "majority", "percent", "total", "none", "pair", "part", "km", "mm"
@@ -104,7 +95,7 @@ def cc_in_subject_filter(article, sentence_dg):
     if not any([sentence_dg.get_by_address(dep)['tag'] == 'CC' for dep in subject_deps]):
         yield article, sentence_dg
 
-class modify_verb_tags():
+class modify_tags():
     def __init__(self):
         input = open('braubt_tagger.pkl', 'rb')
         self.tagger = load(input)
@@ -117,15 +108,19 @@ class modify_verb_tags():
         
     def __call__(self, article, sentence_dg):
         retagged_sentence = self.retag(sentence_dg)
+        subject = find_subject(sentence_dg)
         
-        root_address = sentence_dg.root['address']
+        subject_address = subject[0]['address']
+        verb_address    = sentence_dg.root['address']
         
         try:
-            word, new_tag = retagged_sentence[root_address]
+            verb_word, new_verb_tag = retagged_sentence[verb_address]
+            subject_word, new_subject_tag = retagged_sentence[subject_address]
         except IndexError:
             return
         
-        sentence_dg.root['tag'] = new_tag
+        sentence_dg.get_by_address(verb_address)['tag'] = new_verb_tag
+        sentence_dg.get_by_address(subject_address)['tag'] = new_subject_tag
         
         yield article, sentence_dg
         
@@ -145,10 +140,10 @@ if __name__ == '__main__':
     job.additer(stopword_filter,        identityreducer)
     job.additer(root_is_verb_filter,    identityreducer)
     job.additer(cc_in_subject_filter,   identityreducer)    
-    job.additer(modify_verb_tags,       identityreducer)    
-    job.additer(find_disagreement,      identityreducer)
-    job.additer(wordnet_filter,         identityreducer)
-    job.additer(preposition_filter,     identityreducer)
-    job.additer(convert_to_plaintext,   identityreducer)
+    #job.additer(modify_tags,       identityreducer)    
+    #job.additer(find_disagreement,      identityreducer)
+    #job.additer(wordnet_filter,         identityreducer)
+    #job.additer(preposition_filter,     identityreducer)
+    #job.additer(convert_to_plaintext,   identityreducer)
     #job.additer(linecount, sumreducer, combiner=sumreducer)
     job.run()
