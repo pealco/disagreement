@@ -2,7 +2,7 @@
 # May 9, 2010
 # Finding agreement errors in Wikipedia using Hadoop
 # Call with:
-# dumbo start pipeline.py -input /user/pealco/wikipedia_split_parsed_deduped_dgs  -output /user/pealco/disagreement_pipeline_test -overwrite yes -hadoop h -memlimit 4294967296 -numreducetasks 100
+# dumbo start pipeline.py -input /user/pealco/wikipedia_split_parsed_deduped_dgs  -output /user/pealco/disagreement_pipeline_test -overwrite yes -hadoop h -memlimit 4294967296 -numreducetasks 100 -file 
 
 import os, sys
 from glob import glob
@@ -14,8 +14,11 @@ import re
 import nltk
 from nltk.parse import DependencyGraph
 from nltk.corpus import wordnet as wn
+from nltk.corpus import brown
 
 from dumbo.lib import *
+
+from cPickle import load
 
 
 MAX_LENGTH = 20
@@ -98,6 +101,28 @@ def cc_in_subject_filter(article, sentence_dg):
     subject_deps = subject[0]['deps']
     if not any([sentence_dg.get_by_address(dep)['tag'] == 'CC' for dep in subject_deps]):
         yield article, sentence_dg
+
+class modify_verb_tags():
+    def __init__(self):
+        input = open('braubt_tagger.pkl', 'rb')
+        self.tagger = load(input)
+        input.close()
+    
+    def retag(self, sentence_dg):
+        raw = plaintext(sentence_dg)
+        tokens = nltk.word_tokenize(raw)
+        return self.tagger.tag(tokens)
+        
+    def __call__(self, article, sentence_dg):
+        retagged_sentence = retag(sentence_dg)
+        
+        root_address = sentence_dg.root['address']
+        word, new_tag = retagged_sentence[root_address]
+        
+        sentence_dg.root['tag'] = new_tag
+        
+        yield article, sentence_dg
+        
     
 # Output converters
 def linecount(article, sentence_dg):
@@ -109,14 +134,15 @@ def convert_to_plaintext(article, sentence_dg):
 if __name__ == '__main__':
     import dumbo
     job = dumbo.Job()
-    job.additer(remove_long_sentences,  identityreducer)
-    job.additer(select_verbs,           identityreducer)
-    job.additer(stopword_filter,        identityreducer)
+    #job.additer(remove_long_sentences,  identityreducer)
+    #job.additer(select_verbs,           identityreducer)
+    #job.additer(stopword_filter,        identityreducer)
     job.additer(root_is_verb_filter,    identityreducer)
-    job.additer(cc_in_subject_filter,   identityreducer)    
+    #job.additer(cc_in_subject_filter,   identityreducer)    
+    job.additer(modify_verb_tags,   identityreducer)    
     job.additer(find_disagreement,      identityreducer)
     job.additer(wordnet_filter,         identityreducer)
-    job.additer(preposition_filter,      identityreducer)
+    #job.additer(preposition_filter,      identityreducer)
     job.additer(convert_to_plaintext,   identityreducer)
     #job.additer(linecount, sumreducer, combiner=sumreducer)
     job.run()
