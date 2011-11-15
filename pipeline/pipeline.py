@@ -114,7 +114,7 @@ class modify_verb_tags():
         return self.tagger.tag(tokens)
         
     def __call__(self, article, sentence_dg):
-        retagged_sentence = retag(sentence_dg)
+        retagged_sentence = self.retag(sentence_dg)
         
         root_address = sentence_dg.root['address']
         word, new_tag = retagged_sentence[root_address]
