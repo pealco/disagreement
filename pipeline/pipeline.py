@@ -117,11 +117,15 @@ class modify_verb_tags():
         retagged_sentence = self.retag(sentence_dg)
         
         root_address = sentence_dg.root['address']
-        #word, new_tag = retagged_sentence[root_address]
         
-        #sentence_dg.root['tag'] = new_tag
+        try:
+            word, new_tag = retagged_sentence[root_address]
+        except IndexError:
+            return
         
-        yield sentence_dg.root, retagged_sentence
+        sentence_dg.root['tag'] = new_tag
+        
+        yield article, sentence_dg
         
     
 # Output converters
@@ -139,10 +143,10 @@ if __name__ == '__main__':
     #job.additer(stopword_filter,        identityreducer)
     #job.additer(root_is_verb_filter,    identityreducer)
     #job.additer(cc_in_subject_filter,   identityreducer)    
-    job.additer(modify_verb_tags,   identityreducer)    
+    job.additer(modify_verb_tags,       identityreducer)    
     #job.additer(find_disagreement,      identityreducer)
     #job.additer(wordnet_filter,         identityreducer)
-    #job.additer(preposition_filter,      identityreducer)
+    #job.additer(preposition_filter,     identityreducer)
     #job.additer(convert_to_plaintext,   identityreducer)
     #job.additer(linecount, sumreducer, combiner=sumreducer)
     job.run()
