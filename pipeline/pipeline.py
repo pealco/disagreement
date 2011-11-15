@@ -12,7 +12,12 @@ sys.path.append("/fs/clip-software/python-contrib-2.7.1.0/lib/python2.7/site-pac
 import re
 from nltk.parse import DependencyGraph
 
+import nltk
+from nltk.corpus.reader import wordnet
+from nltk.corpus.reader import WordNetCorpusReader
+
 from dumbo.lib import *
+
 
 MAX_LENGTH = 20
 VERBS = ["is", "are", "was", "were"]
@@ -56,6 +61,7 @@ class wordnet_filter():
     """Yields only sentence with subjects that are in wordnet."""
     
     def __init__(self):
+        nltk.data.path += ["."]
         wn = WordNetCorpusReader(nltk.data.find('wordnet.zip'))
     
     def __call__(self, article, sentence_dg):
