@@ -42,8 +42,8 @@ def select_verbs(article, sentence_dg):
 
 def find_disagreement(article, sentence_dg):
     verb = sentence_dg.root
-    deps = root_dependencies(dg)
-    subject = find_subject(dg)
+    deps = root_dependencies(sentence_dg)
+    subject = find_subject(sentence_dg)
     
     if (subject[0]["tag"] != expected_number[verb["word"]]):
         yield article, sentence_dg
