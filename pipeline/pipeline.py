@@ -61,6 +61,7 @@ class wordnet_filter():
     """Yields only sentence with subjects that are in wordnet."""
     
     def __init__(self):
+        nltk.data.path += ["/scratch0/hadoop/mapred/local","/scratch1/hadoop/mapred/local","/scratch2/hadoop/mapred/local"]
         nltk.data.path += [os.getcwd()]
         wn = WordNetCorpusReader(nltk.data.find('wordnet.zip'))
     
