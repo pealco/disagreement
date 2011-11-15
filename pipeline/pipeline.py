@@ -52,7 +52,7 @@ def find_disagreement(article, sentence_dg):
     if subject[0]["tag"] in ("NN", "NNS") and (subject[0]["tag"] != EXPECTED_NUMBER[verb["word"]]):
         yield article, sentence_dg
 
-class Wordnet_filter:
+class wordnet_filter():
     """Yields only sentence with subjects that are in wordnet."""
     
     def __init__(self):
@@ -60,9 +60,8 @@ class Wordnet_filter:
     
     def __call__(self, article, sentence_dg):
         subject = find_subject(sentence_dg)[0]["word"]
-    
-    if wn.synsets(subject):
-        yield article, sentence_dg
+        if wn.synsets(subject):
+            yield article, sentence_dg
 
 
 
