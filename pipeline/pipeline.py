@@ -80,10 +80,10 @@ def linecount(article, sentence_dg):
 if __name__ == '__main__':
     import dumbo
     job = dumbo.Job()
-#    job.additer(remove_long_sentences,  identityreducer)
-#    job.additer(select_verbs,           identityreducer)
-#    job.additer(find_disagreement,      identityreducer)
+    job.additer(remove_long_sentences,  identityreducer)
+    job.additer(select_verbs,           identityreducer)
+    job.additer(find_disagreement,      identityreducer)
     job.additer(wordnet_filter,         identityreducer)
-#    job.additer(preposition_filter,      identityreducer)
+    #job.additer(preposition_filter,      identityreducer)
     job.additer(linecount, sumreducer, combiner=sumreducer)
     job.run()
