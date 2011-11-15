@@ -4,15 +4,15 @@
 # Call with:
 # dumbo start pipeline.py -input /user/pealco/wikipedia_split_parsed_deduped_dgs  -output /user/pealco/disagreement_pipeline_test -overwrite yes -hadoop h -memlimit 4294967296 -numreducetasks 48 -file wordnet.zip
 
-import sys
+import os, sys
 from glob import glob
 sys.path += glob("/fs/clip-software/python-contrib-2.7.1.0/lib/python2.7/site-packages/*.egg")
 sys.path.append("/fs/clip-software/python-contrib-2.7.1.0/lib/python2.7/site-packages")
 
 import re
-from nltk.parse import DependencyGraph
 
 import nltk
+from nltk.parse import DependencyGraph
 from nltk.corpus.reader import wordnet
 from nltk.corpus.reader import WordNetCorpusReader
 
@@ -61,12 +61,12 @@ class wordnet_filter():
     """Yields only sentence with subjects that are in wordnet."""
     
     def __init__(self):
-        nltk.data.path += ["."]
+        nltk.data.path += [os.getcwd()]
         wn = WordNetCorpusReader(nltk.data.find('wordnet.zip'))
     
     def __call__(self, article, sentence_dg):
         subject = find_subject(sentence_dg)[0]["word"]
-        if wn.synsets(subject):
+        if self.wn.synsets(subject):
             yield article, sentence_dg
 
 
