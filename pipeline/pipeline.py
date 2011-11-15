@@ -2,7 +2,7 @@
 # May 9, 2010
 # Finding agreement errors in Wikipedia using Hadoop
 # Call with:
-# dumbo start pipeline.py -input /user/pealco/wikipedia_split_parsed_deduped_dgs  -output /user/pealco/disagreement_pipeline_test -overwrite yes -hadoop h -memlimit 4294967296 -numreducetasks 48 -file wordnet.zip
+# dumbo start pipeline.py -input /user/pealco/wikipedia_split_parsed_deduped_dgs  -output /user/pealco/disagreement_pipeline_test -overwrite yes -hadoop h -memlimit 4294967296 -numreducetasks 100
 
 import os, sys
 from glob import glob
@@ -78,14 +78,24 @@ def stopword_filter(article, sentence_dg):
                   "species", "series",
                   "fish", "deer", "cattle", "sheep" "proginy"]
     subject = find_subject(sentence_dg)
-    if subject not in stop_nouns:
+    if subject[0]["word"] not in stop_nouns:
+        yield article, sentence_dg
+
+def root_is_verb_filter(article, sentence_dg):
+    """Makes sure that the root is a verb."""
+    if sentence_dg.root['tag'][0] == 'V':
         yield article, sentence_dg
 
 def preposition_filter(article, sentence_dg):
     subject = find_subject(sentence_dg)
     dependencies
 
-
+def cc_in_subject_filter(article, sentence_dg):
+    subject = find_subject(sentence_dg)
+    subject_deps = subject[0]['deps']
+    if not any([sentence_dg.get_by_address(dep)['tag'] == 'CC' for dep in subject_deps]):
+        yield article, sentence_dg
+    
 # Output converters
 def linecount(article, sentence_dg):
     yield "*", 1
@@ -96,11 +106,13 @@ def convert_to_plaintext(article, sentence_dg):
 if __name__ == '__main__':
     import dumbo
     job = dumbo.Job()
-    job.additer(remove_long_sentences,  identityreducer)
-    job.additer(select_verbs,           identityreducer)
-    job.additer(stopword_filter,        identityreducer)
-    job.additer(find_disagreement,      identityreducer)
-    job.additer(wordnet_filter,         identityreducer)
+    #job.additer(remove_long_sentences,  identityreducer)
+    #job.additer(select_verbs,           identityreducer)
+    #job.additer(stopword_filter,        identityreducer)
+    job.additer(root_is_verb_filter,    identityreducer)
+    #job.additer(find_disagreement,      identityreducer)
+    job.additer(cc_in_subject_filter,   identityreducer)
+    #job.additer(wordnet_filter,         identityreducer)
     #job.additer(preposition_filter,      identityreducer)
     job.additer(convert_to_plaintext,   identityreducer)
     #job.additer(linecount, sumreducer, combiner=sumreducer)
