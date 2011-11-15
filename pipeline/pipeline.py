@@ -2,7 +2,7 @@
 # May 9, 2010
 # Finding agreement errors in Wikipedia using Hadoop
 # Call with:
-# dumbo start pipeline.py -input /user/pealco/wikipedia_split_parsed_deduped_dgs  -output /user/pealco/disagreement_pipeline_test -overwrite yes -hadoop h -memlimit 4294967296 -numreducetasks 100 -file 
+# dumbo start pipeline.py -input /user/pealco/wikipedia_split_parsed_deduped_dgs  -output /user/pealco/disagreement_pipeline_test -overwrite yes -hadoop h -memlimit 4294967296 -numreducetasks 100 -file braubt_tagger.pkl
 
 import os, sys
 from glob import glob
@@ -137,12 +137,12 @@ if __name__ == '__main__':
     #job.additer(remove_long_sentences,  identityreducer)
     #job.additer(select_verbs,           identityreducer)
     #job.additer(stopword_filter,        identityreducer)
-    job.additer(root_is_verb_filter,    identityreducer)
+    #job.additer(root_is_verb_filter,    identityreducer)
     #job.additer(cc_in_subject_filter,   identityreducer)    
     job.additer(modify_verb_tags,   identityreducer)    
-    job.additer(find_disagreement,      identityreducer)
-    job.additer(wordnet_filter,         identityreducer)
+    #job.additer(find_disagreement,      identityreducer)
+    #job.additer(wordnet_filter,         identityreducer)
     #job.additer(preposition_filter,      identityreducer)
-    job.additer(convert_to_plaintext,   identityreducer)
+    #job.additer(convert_to_plaintext,   identityreducer)
     #job.additer(linecount, sumreducer, combiner=sumreducer)
     job.run()
