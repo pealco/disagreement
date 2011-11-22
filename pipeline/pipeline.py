@@ -140,7 +140,7 @@ if __name__ == '__main__':
     job.additer(stopword_filter,        identityreducer)
     job.additer(root_is_verb_filter,    identityreducer)
     job.additer(cc_in_subject_filter,   identityreducer)    
-    job.additer(modify_tags,       identityreducer)    
+    #job.additer(modify_tags,       identityreducer)    
     job.additer(find_disagreement,      identityreducer)
     job.additer(wordnet_filter,         identityreducer)
     job.additer(preposition_filter,     identityreducer)
