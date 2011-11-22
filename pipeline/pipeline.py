@@ -12,6 +12,8 @@ sys.path.append("/fs/clip-software/python-contrib-2.7.1.0/lib/python2.7/site-pac
 import re
 
 import nltk
+nltk.data.path += ["/fs/clip-software/nltk-2.0b9-data"]
+
 from nltk.parse import DependencyGraph
 from nltk.corpus import wordnet as wn
 from nltk.corpus import brown
