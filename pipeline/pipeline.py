@@ -4,7 +4,12 @@
 # Call with:
 # dumbo start pipeline.py -input /user/pealco/wikipedia_split_parsed_deduped_dgs  -output /user/pealco/disagreement_pipeline_copula -overwrite yes -hadoop h -memlimit 4294967296 -numreducetasks 100 -file braubt_tagger.pkl
 
-import os, sys, re
+import os, sys
+
+sys.path += glob("/fs/clip-software/python-contrib-2.7.1.0/lib/python2.7/site-packages/*.egg")
+sys.path.append("/fs/clip-software/python-contrib-2.7.1.0/lib/python2.7/site-packages")
+
+import re
 from glob import glob
 from cPickle import load
 from functools import partial
@@ -17,8 +22,6 @@ from dumbo.lib import *
 
 ### Path updates.
 
-sys.path += glob("/fs/clip-software/python-contrib-2.7.1.0/lib/python2.7/site-packages/*.egg")
-sys.path.append("/fs/clip-software/python-contrib-2.7.1.0/lib/python2.7/site-packages")
 nltk.data.path += ["/fs/clip-software/nltk-2.0b9-data"]
 
 ## Constants.
