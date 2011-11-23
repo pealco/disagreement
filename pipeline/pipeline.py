@@ -36,11 +36,11 @@ from functools import partial
 
 class _compfunc(partial):
     def __lshift__(self, y):
-        f = lambda *args, **kwargs: self.func(y(*args, **kwargs)) 
+        f = lambda *args, **kwargs: self.func(*y(*args, **kwargs)) 
         return _compfunc(f)
 
     def __rshift__(self, y):
-        f = lambda *args, **kwargs: y(self.func(*args, **kwargs)) 
+        f = lambda *args, **kwargs: y(*self.func(*args, **kwargs)) 
         return _compfunc(f)
 
 def composable(f):
