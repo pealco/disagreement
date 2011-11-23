@@ -4,24 +4,24 @@
 # Call with:
 # dumbo start pipeline.py -input /user/pealco/wikipedia_split_parsed_deduped_dgs  -output /user/pealco/disagreement_pipeline_copula -overwrite yes -hadoop h -memlimit 4294967296 -numreducetasks 100 -file braubt_tagger.pkl
 
-import os, sys
+import os, sys, re
 from glob import glob
-sys.path += glob("/fs/clip-software/python-contrib-2.7.1.0/lib/python2.7/site-packages/*.egg")
-sys.path.append("/fs/clip-software/python-contrib-2.7.1.0/lib/python2.7/site-packages")
-
-import re
+from cPickle import load
+from functools import partial
 
 import nltk
-nltk.data.path += ["/fs/clip-software/nltk-2.0b9-data"]
-
 from nltk.parse import DependencyGraph
 from nltk.corpus import wordnet as wn
-from nltk.corpus import brown
 
 from dumbo.lib import *
 
-from cPickle import load
+### Path updates.
 
+sys.path += glob("/fs/clip-software/python-contrib-2.7.1.0/lib/python2.7/site-packages/*.egg")
+sys.path.append("/fs/clip-software/python-contrib-2.7.1.0/lib/python2.7/site-packages")
+nltk.data.path += ["/fs/clip-software/nltk-2.0b9-data"]
+
+## Constants.
 
 MAX_LENGTH = 20
 VERBS = ["is", "are", "was", "were"]
@@ -32,7 +32,7 @@ NUMBER = {  "VBZ" : "SG",
             "NN"  : "SG",
             "NNS" : "PL" }
 
-from functools import partial
+### Function composition.
 
 class _compfunc(partial):
     def __lshift__(self, y):
@@ -45,6 +45,9 @@ class _compfunc(partial):
 
 def composable(f):
     return _compfunc(f)
+    
+def compose(functions):
+    return reduce(lambda x, y: x >> y, functions)
 
 
 def quit_on_failure(func):
@@ -54,7 +57,8 @@ def quit_on_failure(func):
         else:
             return False
     return wrapper
-
+    
+### Helper functions.
 
 def root_dependencies(dg): 
     return [dg.get_by_address(node) for node in dg.root["deps"]]
@@ -68,7 +72,7 @@ def find_subject(dg):
 def plaintext(dg):
     return " ".join([node["word"] for node in dg.nodelist[1:]])
     
-# Filters
+### Filters
 
 @composable
 @quit_on_failure
@@ -144,7 +148,8 @@ def cc_in_subject_filter(data):
     if not any([sentence_dg.get_by_address(dep)['tag'] == 'CC' for dep in subject_deps]):
         return article, sentence_dg
 
-
+@composable
+@quit_on_failure
 class modify_tags():
     def __init__(self):
         input = open('braubt_tagger.pkl', 'rb')
@@ -176,8 +181,6 @@ class modify_tags():
         
     
 # Output converters
-def linecount(article, sentence_dg):
-    return "*", 1
 
 @composable
 @quit_on_failure
@@ -189,23 +192,26 @@ def convert_to_plaintext(data):
 
 def pipeline(article, sentence_dg):
     data = (article, sentence_dg)
-    result = (remove_long_sentences >> select_verbs >> stopword_filter >> root_is_verb_filter >> cc_in_subject_filter >> find_disagreement >> wordnet_filter >> preposition_filter >> convert_to_plaintext)(data)
+    
+    functions = [remove_long_sentences,
+                 select_verbs,
+                 stopword_filter,
+                 root_is_verb_filter,
+                 cc_in_subject_filter,
+                 find_disagreement,
+                 wordnet_filter,
+                 preposition_filter,
+                 convert_to_plaintext]
+    
+    composed_function = compose(functions)
+    
+    result = composed_function(data)
+    
     if result:
         yield result
 
 if __name__ == '__main__':
     import dumbo
     job = dumbo.Job()
-    #job.additer(remove_long_sentences,  identityreducer)
-    #job.additer(select_verbs,           identityreducer)
-    #job.additer(stopword_filter,        identityreducer)
-    #job.additer(root_is_verb_filter,    identityreducer)
-    #job.additer(cc_in_subject_filter,   identityreducer)    
-    ##job.additer(modify_tags,       identityreducer)    
-    #job.additer(find_disagreement,      identityreducer)
-    #job.additer(wordnet_filter,         identityreducer)
-    #job.additer(preposition_filter,     identityreducer)
-    #job.additer(convert_to_plaintext,   identityreducer)
-    #job.additer(linecount, sumreducer, combiner=sumreducer)
     job.additer(pipeline, identityreducer)
     job.run()
