@@ -43,13 +43,13 @@ class _compfunc(partial):
         return _compfunc(f)
 
 def composable(f):
-    return _compfunc(f)
+    return _compfunc(fail_gracefully(f))
     
 def compose(functions):
     return reduce(lambda x, y: x + y, functions)
 
 
-def quit_on_failure(func):
+def fail_gracefully(func):
     def wrapper(data):
         if data:
             return func(data)
@@ -74,21 +74,18 @@ def plaintext(dg):
 ### Filters
 
 @composable
-@quit_on_failure
 def remove_long_sentences(data):
     article, sentence_dg = data
     if len(sentence_dg.nodelist) <= MAX_LENGTH:
         return article, sentence_dg
 
 @composable
-@quit_on_failure
 def select_verbs(data):
     article, sentence_dg = data
     if sentence_dg.root["word"] in VERBS:
         return article, sentence_dg
 
 @composable
-@quit_on_failure
 def find_disagreement(data):
     article, sentence_dg = data
     subject = find_subject(sentence_dg)
@@ -101,7 +98,6 @@ def find_disagreement(data):
             return article, sentence_dg
 
 @composable
-@quit_on_failure
 def wordnet_filter(data):
     article, sentence_dg = data
     """returns only sentence with subjects that are in wordnet."""    
@@ -110,7 +106,6 @@ def wordnet_filter(data):
         return article, sentence_dg
 
 @composable
-@quit_on_failure
 def stopword_filter(data):
     article, sentence_dg = data
     stop_nouns = ["number", "majority", "percent", "total", "none", "pair", "part", "km", "mm"
@@ -121,7 +116,6 @@ def stopword_filter(data):
         return article, sentence_dg
 
 @composable
-@quit_on_failure
 def root_is_verb_filter(data):
     """Makes sure that the root is a verb."""
     article, sentence_dg = data
@@ -129,7 +123,6 @@ def root_is_verb_filter(data):
         return article, sentence_dg
 
 @composable
-@quit_on_failure
 def preposition_filter(data):
     article, sentence_dg = data
     subject = find_subject(sentence_dg)
@@ -138,7 +131,6 @@ def preposition_filter(data):
         return article, sentence_dg
 
 @composable
-@quit_on_failure
 def cc_in_subject_filter(data):
     """ The subject should not contain coordination."""
     article, sentence_dg = data
@@ -148,7 +140,6 @@ def cc_in_subject_filter(data):
         return article, sentence_dg
 
 @composable
-@quit_on_failure
 class modify_tags():
     def __init__(self):
         input = open('braubt_tagger.pkl', 'rb')
@@ -182,7 +173,6 @@ class modify_tags():
 # Output converters
 
 @composable
-@quit_on_failure
 def convert_to_plaintext(data):
     article, sentence_dg = data
     return article, plaintext(sentence_dg)
