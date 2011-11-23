@@ -179,16 +179,18 @@ def linecount(article, sentence_dg):
     return "*", 1
 
 @composable
+@quit_on_failure
 def convert_to_plaintext(data):
-    if data:
-        article, sentence_dg = data
-        return article, plaintext(sentence_dg)
+    article, sentence_dg = data
+    return article, plaintext(sentence_dg)
 
 # Composed pipeline
 
 def pipeline(article, sentence_dg):
     data = (article, sentence_dg)
-    yield (remove_long_sentences >> select_verbs >> stopword_filter >> root_is_verb_filter >> cc_in_subject_filter >> find_disagreement >> wordnet_filter >> preposition_filter >> convert_to_plaintext)(data)
+    result = (remove_long_sentences >> select_verbs >> stopword_filter >> root_is_verb_filter >> cc_in_subject_filter >> find_disagreement >> wordnet_filter >> preposition_filter >> convert_to_plaintext)(data)
+    if result:
+        yield result
 
 if __name__ == '__main__':
     import dumbo
