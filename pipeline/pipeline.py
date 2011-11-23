@@ -36,11 +36,11 @@ from functools import partial
 
 class _compfunc(partial):
     def __lshift__(self, y):
-        f = lambda *args, **kwargs: self.func(*y(*args, **kwargs)) 
+        f = lambda *args, **kwargs: self.func(y(*args, **kwargs)) 
         return _compfunc(f)
 
     def __rshift__(self, y):
-        f = lambda *args, **kwargs: y(*self.func(*args, **kwargs)) 
+        f = lambda *args, **kwargs: y(self.func(*args, **kwargs)) 
         return _compfunc(f)
 
 def composable(f):
@@ -62,17 +62,20 @@ def plaintext(dg):
 # Filters
 
 @composable
-def remove_long_sentences(article, sentence_dg):
+def remove_long_sentences(data):
+    article, sentence_dg = data
     if len(sentence_dg.nodelist) <= MAX_LENGTH:
         yield article, sentence_dg
 
 @composable
-def select_verbs(article, sentence_dg):
+def select_verbs(data):
+    article, sentence_dg = data
     if sentence_dg.root["word"] in VERBS:
         yield article, sentence_dg
 
 @composable
-def find_disagreement(article, sentence_dg):
+def find_disagreement(data):
+    article, sentence_dg = data
     subject = find_subject(sentence_dg)
     subject_tag = subject[0]["tag"]
     verb = sentence_dg.root
@@ -83,14 +86,16 @@ def find_disagreement(article, sentence_dg):
             yield article, sentence_dg
 
 @composable
-def wordnet_filter(article, sentence_dg):
+def wordnet_filter(data):
+    article, sentence_dg = data
     """Yields only sentence with subjects that are in wordnet."""    
     subject = find_subject(sentence_dg)[0]["word"]
     if wn.synsets(subject):
         yield article, sentence_dg
 
 @composable
-def stopword_filter(article, sentence_dg):
+def stopword_filter(data):
+    article, sentence_dg = data
     stop_nouns = ["number", "majority", "percent", "total", "none", "pair", "part", "km", "mm"
                   "species", "series", "variety", "rest", "percentage"
                   "fish", "deer", "cattle", "sheep" "proginy"]
@@ -99,21 +104,24 @@ def stopword_filter(article, sentence_dg):
         yield article, sentence_dg
 
 @composable
-def root_is_verb_filter(article, sentence_dg):
+def root_is_verb_filter(data):
     """Makes sure that the root is a verb."""
+    article, sentence_dg = data
     if sentence_dg.root['tag'][0] == 'V':
         yield article, sentence_dg
 
 @composable
-def preposition_filter(article, sentence_dg):
+def preposition_filter(data):
+    article, sentence_dg = data
     subject = find_subject(sentence_dg)
     subject_deps = subject[0]['deps']
     if any([sentence_dg.get_by_address(dep)['tag'] == 'IN' for dep in subject_deps]):
         yield article, sentence_dg
 
 @composable
-def cc_in_subject_filter(article, sentence_dg):
+def cc_in_subject_filter(data):
     """ The subject should not contain coordination."""
+    article, sentence_dg = data
     subject = find_subject(sentence_dg)
     subject_deps = subject[0]['deps']
     if not any([sentence_dg.get_by_address(dep)['tag'] == 'CC' for dep in subject_deps]):
@@ -155,13 +163,15 @@ def linecount(article, sentence_dg):
     yield "*", 1
 
 @composable
-def convert_to_plaintext(article, sentence_dg):
+def convert_to_plaintext(data):
+    article, sentence_dg = data
     yield article, plaintext(sentence_dg)
 
 # Composed pipeline
 
 def pipeline(article, sentence_dg):
-    yield (remove_long_sentences >> select_verbs >> stopword_filter >> root_is_verb_filter >> cc_in_subject_filter >> find_disagreement >> wordnet_filter >> preposition_filter >> convert_to_plaintext)(article, sentence_dg)
+    data = (article, sentence_dg)
+    yield (remove_long_sentences >> select_verbs >> stopword_filter >> root_is_verb_filter >> cc_in_subject_filter >> find_disagreement >> wordnet_filter >> preposition_filter >> convert_to_plaintext)(data)
 
 if __name__ == '__main__':
     import dumbo
