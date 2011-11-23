@@ -35,11 +35,7 @@ NUMBER = {  "VBZ" : "SG",
 ### Function composition.
 
 class _compfunc(partial):
-    def __lshift__(self, y):
-        f = lambda *args, **kwargs: self.func(y(*args, **kwargs)) 
-        return _compfunc(f)
-
-    def __rshift__(self, y):
+    def __add__(self, y):
         f = lambda *args, **kwargs: y(self.func(*args, **kwargs)) 
         return _compfunc(f)
 
@@ -47,7 +43,7 @@ def composable(f):
     return _compfunc(f)
     
 def compose(functions):
-    return reduce(lambda x, y: x >> y, functions)
+    return reduce(lambda x, y: x + y, functions)
 
 
 def quit_on_failure(func):
