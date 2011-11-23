@@ -2,7 +2,7 @@
 # May 9, 2010
 # Finding agreement errors in Wikipedia using Hadoop
 # Call with:
-# dumbo start pipeline.py -input /user/pealco/wikipedia_split_parsed_deduped_dgs  -output /user/pealco/disagreement_pipeline_copula_control -overwrite yes -hadoop h -memlimit 4294967296 -numreducetasks 100 -file braubt_tagger.pkl
+# dumbo start pipeline.py -input /user/pealco/wikipedia_split_parsed_deduped_dgs  -output /user/pealco/disagreement_pipeline_copula -overwrite yes -hadoop h -memlimit 4294967296 -numreducetasks 100 -file braubt_tagger.pkl
 
 import os, sys
 from glob import glob
@@ -47,6 +47,14 @@ def composable(f):
     return _compfunc(f)
 
 
+def quit_on_failure(func):
+    def wrapper(data):
+        if data:
+            func(data)
+        else:
+            return False
+
+
 def root_dependencies(dg): 
     return [dg.get_by_address(node) for node in dg.root["deps"]]
 
@@ -62,12 +70,14 @@ def plaintext(dg):
 # Filters
 
 @composable
+@quit_on_failure
 def remove_long_sentences(data):
     article, sentence_dg = data
     if len(sentence_dg.nodelist) <= MAX_LENGTH:
         yield article, sentence_dg
 
 @composable
+@quit_on_failure
 def select_verbs(data):
     article, sentence_dg = data
     if sentence_dg.root["word"] in VERBS:
@@ -86,6 +96,7 @@ def find_disagreement(data):
             yield article, sentence_dg
 
 @composable
+@quit_on_failure
 def wordnet_filter(data):
     article, sentence_dg = data
     """Yields only sentence with subjects that are in wordnet."""    
@@ -94,6 +105,7 @@ def wordnet_filter(data):
         yield article, sentence_dg
 
 @composable
+@quit_on_failure
 def stopword_filter(data):
     article, sentence_dg = data
     stop_nouns = ["number", "majority", "percent", "total", "none", "pair", "part", "km", "mm"
@@ -104,6 +116,7 @@ def stopword_filter(data):
         yield article, sentence_dg
 
 @composable
+@quit_on_failure
 def root_is_verb_filter(data):
     """Makes sure that the root is a verb."""
     article, sentence_dg = data
@@ -111,6 +124,7 @@ def root_is_verb_filter(data):
         yield article, sentence_dg
 
 @composable
+@quit_on_failure
 def preposition_filter(data):
     article, sentence_dg = data
     subject = find_subject(sentence_dg)
@@ -119,6 +133,7 @@ def preposition_filter(data):
         yield article, sentence_dg
 
 @composable
+@quit_on_failure
 def cc_in_subject_filter(data):
     """ The subject should not contain coordination."""
     article, sentence_dg = data
@@ -164,8 +179,9 @@ def linecount(article, sentence_dg):
 
 @composable
 def convert_to_plaintext(data):
-    article, sentence_dg = data
-    yield article, plaintext(sentence_dg)
+    if data:
+        article, sentence_dg = data
+        yield article, plaintext(sentence_dg)
 
 # Composed pipeline
 
