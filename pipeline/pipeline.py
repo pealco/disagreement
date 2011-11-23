@@ -50,9 +50,10 @@ def composable(f):
 def quit_on_failure(func):
     def wrapper(data):
         if data:
-            func(data)
+            return func(data)
         else:
             return False
+    return wrapper
 
 
 def root_dependencies(dg): 
@@ -74,14 +75,14 @@ def plaintext(dg):
 def remove_long_sentences(data):
     article, sentence_dg = data
     if len(sentence_dg.nodelist) <= MAX_LENGTH:
-        yield article, sentence_dg
+        return article, sentence_dg
 
 @composable
 @quit_on_failure
 def select_verbs(data):
     article, sentence_dg = data
     if sentence_dg.root["word"] in VERBS:
-        yield article, sentence_dg
+        return article, sentence_dg
 
 @composable
 def find_disagreement(data):
@@ -93,16 +94,16 @@ def find_disagreement(data):
     
     if subject_tag in NUMBER and verb_tag in NUMBER:
         if NUMBER[subject_tag] != NUMBER[verb_tag]:
-            yield article, sentence_dg
+            return article, sentence_dg
 
 @composable
 @quit_on_failure
 def wordnet_filter(data):
     article, sentence_dg = data
-    """Yields only sentence with subjects that are in wordnet."""    
+    """returns only sentence with subjects that are in wordnet."""    
     subject = find_subject(sentence_dg)[0]["word"]
     if wn.synsets(subject):
-        yield article, sentence_dg
+        return article, sentence_dg
 
 @composable
 @quit_on_failure
@@ -113,7 +114,7 @@ def stopword_filter(data):
                   "fish", "deer", "cattle", "sheep" "proginy"]
     subject = find_subject(sentence_dg)
     if subject[0]["word"] not in stop_nouns:
-        yield article, sentence_dg
+        return article, sentence_dg
 
 @composable
 @quit_on_failure
@@ -121,7 +122,7 @@ def root_is_verb_filter(data):
     """Makes sure that the root is a verb."""
     article, sentence_dg = data
     if sentence_dg.root['tag'][0] == 'V':
-        yield article, sentence_dg
+        return article, sentence_dg
 
 @composable
 @quit_on_failure
@@ -130,7 +131,7 @@ def preposition_filter(data):
     subject = find_subject(sentence_dg)
     subject_deps = subject[0]['deps']
     if any([sentence_dg.get_by_address(dep)['tag'] == 'IN' for dep in subject_deps]):
-        yield article, sentence_dg
+        return article, sentence_dg
 
 @composable
 @quit_on_failure
@@ -140,7 +141,7 @@ def cc_in_subject_filter(data):
     subject = find_subject(sentence_dg)
     subject_deps = subject[0]['deps']
     if not any([sentence_dg.get_by_address(dep)['tag'] == 'CC' for dep in subject_deps]):
-        yield article, sentence_dg
+        return article, sentence_dg
 
 
 class modify_tags():
@@ -170,18 +171,18 @@ class modify_tags():
         sentence_dg.get_by_address(verb_address)['tag'] = new_verb_tag
         sentence_dg.get_by_address(subject_address)['tag'] = new_subject_tag
         
-        yield article, sentence_dg
+        return article, sentence_dg
         
     
 # Output converters
 def linecount(article, sentence_dg):
-    yield "*", 1
+    return "*", 1
 
 @composable
 def convert_to_plaintext(data):
     if data:
         article, sentence_dg = data
-        yield article, plaintext(sentence_dg)
+        return article, plaintext(sentence_dg)
 
 # Composed pipeline
 
