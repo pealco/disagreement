@@ -2,7 +2,7 @@
 # May 9, 2010
 # Finding agreement errors in Wikipedia using Hadoop
 # Call with:
-# dumbo start pipeline.py -input /user/pealco/wikipedia_split_parsed_deduped_dgs  -output /user/pealco/disagreement_pipeline_copula -overwrite yes -hadoop h -memlimit 4294967296 -numreducetasks 100 -file braubt_tagger.pkl
+# dumbo start pipeline.py -input /user/pealco/wikipedia_split_parsed_deduped_dgs  -output /user/pealco/disagreement_pipeline_copula_control -overwrite yes -hadoop h -memlimit 4294967296 -numreducetasks 100 -file braubt_tagger.pkl
 
 import os, sys
 from glob import glob
@@ -32,6 +32,20 @@ NUMBER = {  "VBZ" : "SG",
             "NN"  : "SG",
             "NNS" : "PL" }
 
+from functools import partial
+
+class _compfunc(partial):
+    def __lshift__(self, y):
+        f = lambda *args, **kwargs: self.func(y(*args, **kwargs)) 
+        return _compfunc(f)
+
+    def __rshift__(self, y):
+        f = lambda *args, **kwargs: y(self.func(*args, **kwargs)) 
+        return _compfunc(f)
+
+def composable(f):
+    return _compfunc(f)
+
 
 def root_dependencies(dg): 
     return [dg.get_by_address(node) for node in dg.root["deps"]]
@@ -47,14 +61,17 @@ def plaintext(dg):
     
 # Filters
 
+@composable
 def remove_long_sentences(article, sentence_dg):
     if len(sentence_dg.nodelist) <= MAX_LENGTH:
         yield article, sentence_dg
 
+@composable
 def select_verbs(article, sentence_dg):
     if sentence_dg.root["word"] in VERBS:
         yield article, sentence_dg
 
+@composable
 def find_disagreement(article, sentence_dg):
     subject = find_subject(sentence_dg)
     subject_tag = subject[0]["tag"]
@@ -65,37 +82,43 @@ def find_disagreement(article, sentence_dg):
         if NUMBER[subject_tag] != NUMBER[verb_tag]:
             yield article, sentence_dg
 
+@composable
 def wordnet_filter(article, sentence_dg):
     """Yields only sentence with subjects that are in wordnet."""    
     subject = find_subject(sentence_dg)[0]["word"]
     if wn.synsets(subject):
         yield article, sentence_dg
 
+@composable
 def stopword_filter(article, sentence_dg):
     stop_nouns = ["number", "majority", "percent", "total", "none", "pair", "part", "km", "mm"
-                  "species", "series",
+                  "species", "series", "variety", "rest", "percentage"
                   "fish", "deer", "cattle", "sheep" "proginy"]
     subject = find_subject(sentence_dg)
     if subject[0]["word"] not in stop_nouns:
         yield article, sentence_dg
 
+@composable
 def root_is_verb_filter(article, sentence_dg):
     """Makes sure that the root is a verb."""
     if sentence_dg.root['tag'][0] == 'V':
         yield article, sentence_dg
 
+@composable
 def preposition_filter(article, sentence_dg):
     subject = find_subject(sentence_dg)
     subject_deps = subject[0]['deps']
     if any([sentence_dg.get_by_address(dep)['tag'] == 'IN' for dep in subject_deps]):
         yield article, sentence_dg
 
+@composable
 def cc_in_subject_filter(article, sentence_dg):
     """ The subject should not contain coordination."""
     subject = find_subject(sentence_dg)
     subject_deps = subject[0]['deps']
     if not any([sentence_dg.get_by_address(dep)['tag'] == 'CC' for dep in subject_deps]):
         yield article, sentence_dg
+
 
 class modify_tags():
     def __init__(self):
@@ -131,21 +154,28 @@ class modify_tags():
 def linecount(article, sentence_dg):
     yield "*", 1
 
+@composable
 def convert_to_plaintext(article, sentence_dg):
     yield article, plaintext(sentence_dg)
+
+# Composed pipeline
+
+def pipeline(article, sentence_dg):
+    yield (remove_long_sentences >> select_verbs >> stopword_filter >> root_is_verb_filter >> cc_in_subject_filter >> find_disagreement >> wordnet_filter >> preposition_filter >> convert_to_plaintext)(article, sentence_dg)
 
 if __name__ == '__main__':
     import dumbo
     job = dumbo.Job()
-    job.additer(remove_long_sentences,  identityreducer)
-    job.additer(select_verbs,           identityreducer)
-    job.additer(stopword_filter,        identityreducer)
-    job.additer(root_is_verb_filter,    identityreducer)
-    job.additer(cc_in_subject_filter,   identityreducer)    
-    #job.additer(modify_tags,       identityreducer)    
-    job.additer(find_disagreement,      identityreducer)
-    job.additer(wordnet_filter,         identityreducer)
-    job.additer(preposition_filter,     identityreducer)
-    job.additer(convert_to_plaintext,   identityreducer)
+    #job.additer(remove_long_sentences,  identityreducer)
+    #job.additer(select_verbs,           identityreducer)
+    #job.additer(stopword_filter,        identityreducer)
+    #job.additer(root_is_verb_filter,    identityreducer)
+    #job.additer(cc_in_subject_filter,   identityreducer)    
+    ##job.additer(modify_tags,       identityreducer)    
+    #job.additer(find_disagreement,      identityreducer)
+    #job.additer(wordnet_filter,         identityreducer)
+    #job.additer(preposition_filter,     identityreducer)
+    #job.additer(convert_to_plaintext,   identityreducer)
     #job.additer(linecount, sumreducer, combiner=sumreducer)
+    job.additer(pipeline, identityreducer)
     job.run()
