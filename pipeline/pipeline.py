@@ -85,6 +85,7 @@ def select_verbs(data):
         return article, sentence_dg
 
 @composable
+@quit_on_failure
 def find_disagreement(data):
     article, sentence_dg = data
     subject = find_subject(sentence_dg)
