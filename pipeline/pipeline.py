@@ -35,6 +35,10 @@ NUMBER = {  "VBZ" : "SG",
             "VB"  : "PL",
             "NN"  : "SG",
             "NNS" : "PL" }
+            
+input = open('braubt_tagger.pkl', 'rb')
+TAGGER = load(input)
+input.close()            
 
 ### Function composition.
 
@@ -71,7 +75,12 @@ def find_subject(dg):
 
 def plaintext(dg):
     return " ".join([node["word"] for node in dg.nodelist[1:]])
-    
+
+def retag(sentence_dg):
+    raw = plaintext(sentence_dg)
+    tokens = nltk.word_tokenize(raw)
+    return TAGGER.tag(tokens)
+
 ### Filters
 
 @composable
@@ -144,35 +153,24 @@ def cc_in_subject_filter(data):
     if not any([sentence_dg.get_by_address(dep)['tag'] == 'CC' for dep in subject_deps]):
         return article, sentence_dg
 
-@composable
-class modify_tags():
-    def __init__(self):
-        input = open('braubt_tagger.pkl', 'rb')
-        self.tagger = load(input)
-        input.close()
+@composable    
+def modify_tags(article, sentence_dg):
+    retagged_sentence = retag(sentence_dg)
+    subject = find_subject(sentence_dg)
     
-    def retag(self, sentence_dg):
-        raw = plaintext(sentence_dg)
-        tokens = nltk.word_tokenize(raw)
-        return self.tagger.tag(tokens)
-        
-    def __call__(self, article, sentence_dg):
-        retagged_sentence = self.retag(sentence_dg)
-        subject = find_subject(sentence_dg)
-        
-        subject_address = subject[0]['address']
-        verb_address    = sentence_dg.root['address']
-        
-        try:
-            verb_word, new_verb_tag = retagged_sentence[verb_address]
-            subject_word, new_subject_tag = retagged_sentence[subject_address]
-        except IndexError:
-            return
-        
-        sentence_dg.get_by_address(verb_address)['tag'] = new_verb_tag
-        sentence_dg.get_by_address(subject_address)['tag'] = new_subject_tag
-        
-        return article, sentence_dg
+    subject_address = subject[0]['address']
+    verb_address    = sentence_dg.root['address']
+    
+    try:
+        verb_word, new_verb_tag = retagged_sentence[verb_address]
+        subject_word, new_subject_tag = retagged_sentence[subject_address]
+    except IndexError:
+        return False
+    
+    sentence_dg.get_by_address(verb_address)['tag'] = new_verb_tag
+    sentence_dg.get_by_address(subject_address)['tag'] = new_subject_tag
+    
+    return article, sentence_dg
         
     
 # Output converters
