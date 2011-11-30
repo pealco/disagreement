@@ -20,7 +20,7 @@ from collections import defaultdict
 ### Path updates.
 
 nltk.data.path += ["/fs/clip-software/nltk-2.0b9-data"]
-from nltk.corpus import wordnet as wn
+
 
 def mapper(data):
     # initialize
@@ -29,8 +29,7 @@ def mapper(data):
     # map
     for article, dg in data:
         for node in dg.nodelist[1:]:
-            if wn.synsets(node["word"]):
-                H[node["word"]] += 1
+            H[node["word"]] += 1
 
     # close
     for word in H:
