@@ -108,9 +108,13 @@ def wordnet_filter(data):
 @composable
 def stopword_filter(data):
     article, sentence_dg = data
-    stop_nouns = ["number", "majority", "percent", "total", "none", "pair", "part", "km", "mm"
-                  "species", "series", "variety", "rest", "percentage"
-                  "fish", "deer", "cattle", "sheep" "proginy"]
+    stop_nouns = ["number", "majority", "minority", "variety", "percent", 
+                    "total", "none", "pair", "part", "km", "mm"
+                    "species", "series", "variety", "rest", "percentage"
+                    "fish", "deer", "cattle", "sheep" "proginy",
+                    "first", "second", "third", "fourth", "fifth", "sixth", 
+                    "seventh", "eighth", "ninth", "tenth"
+                  ]
     subject = find_subject(sentence_dg)
     if subject[0]["word"] not in stop_nouns:
         return article, sentence_dg
