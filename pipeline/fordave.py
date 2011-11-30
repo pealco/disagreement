@@ -20,15 +20,15 @@ from collections import defaultdict
 def plaintext(dg):
     return " ".join([node["word"] for node in dg.nodelist[1:]])
 
-def mapper(data):
-    for article, dg in data:
-        for node in dg.nodelist[1:]:
-            if "but he" in plaintext(dg):
-                yield "BUT", plaintext(dg)
-            
-            if "when he" in plaintext(dg):
-                yield "WHEN", plaintext(dg)
-
+def mapper(article, dg):
+    if " but he " in plaintext(dg):
+        yield "BUT",  plaintext(dg)
+    
+    if " when he " in plaintext(dg):
+        yield "WHEN", plaintext(dg)
+    
+    
+    
     
 if __name__ == '__main__':
     import dumbo
