@@ -27,7 +27,7 @@ nltk.data.path += ["/fs/clip-software/nltk-2.0b9-data"]
 
 ## Constants.
 
-MAX_LENGTH = 20
+MAX_LENGTH = 25
 VERBS = ["is", "are", "was", "were"]
 
 NUMBER = {  "VBZ" : "SG",
