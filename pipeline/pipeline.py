@@ -126,7 +126,7 @@ def stopword_filter(data):
                     "seventh", "eighth", "ninth", "tenth"
                   ]
     subject = find_subject(sentence_dg)
-    if subject[0]["word"] not in stop_nouns:
+    if subject[0]["word"].lower() not in stop_nouns:
         return article, sentence_dg
 
 @composable
@@ -209,7 +209,6 @@ def pipeline(article, sentence_dg):
                       stopword_filter,
                       root_is_verb_filter,
                       cc_in_subject_filter,
-                      modify_subject_tags,
                       find_disagreement,
                       wordnet_filter,
                       preposition_filter,
