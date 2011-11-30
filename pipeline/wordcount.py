@@ -2,7 +2,7 @@
 #
 # Wikipedia wordcount
 # Call with:
-# dumbo start wordcount.py -input /user/pealco/wikipedia_split_parsed_deduped_dgs  -output /user/pealco/disagreement_wordcount -overwrite yes -hadoop h -memlimit 4294967296 -numreducetasks 100
+# dumbo start wordcount.py -input /user/pealco/wikipedia_split_parsed_deduped_dgs  -output /user/pealco/disagreement_wordcount -overwrite yes -hadoop h -memlimit 4294967296
 
 import os, sys
 from glob import glob
