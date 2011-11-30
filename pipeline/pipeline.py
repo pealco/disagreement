@@ -36,9 +36,9 @@ NUMBER = {  "VBZ" : "SG",
             "NN"  : "SG",
             "NNS" : "PL" }
             
-input = open('braubt_tagger.pkl', 'rb')
-TAGGER = load(input)
-input.close()            
+#input = open('braubt_tagger.pkl', 'rb')
+#TAGGER = load(input)
+#input.close()            
 
 ### Function composition.
 
