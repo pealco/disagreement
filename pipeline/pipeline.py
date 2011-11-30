@@ -153,6 +153,19 @@ def cc_in_subject_filter(data):
     if not any([sentence_dg.get_by_address(dep)['tag'] == 'CC' for dep in subject_deps]):
         return article, sentence_dg
 
+@composable
+def and_filter(data):
+    """ Filters sentences with 'and' before the verb. """
+    
+    article, sentence_dg = data
+    verb_address = sentence_dg.root["address"]
+    
+    preverb = [sentence_dg.get_by_address(address)['tag'] for address in xrange(verb_address)]
+    
+    if 'CC' not in preverb:
+        yield article, sentence_dg
+
+        
 @composable    
 def modify_tags(data):
     article, sentence_dg = data
