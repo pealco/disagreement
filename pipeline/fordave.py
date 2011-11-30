@@ -23,7 +23,7 @@ def plaintext(dg):
 def mapper(data):
     for article, dg in data:
         for node in dg.nodelist[1:]:
-            if "but he" in plaintext(dg)
+            if "but he" in plaintext(dg):
                 yield "BUT", plaintext(dg)
             
             if "when he" in plaintext(dg):
