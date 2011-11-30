@@ -163,7 +163,7 @@ def and_filter(data):
     preverb = [sentence_dg.get_by_address(address)['tag'] for address in xrange(verb_address)]
     
     if 'CC' not in preverb:
-        yield article, sentence_dg
+        return article, sentence_dg
 
         
 @composable    
