@@ -123,7 +123,8 @@ def stopword_filter(data):
                     "species", "series", "variety", "rest", "percentage"
                     "fish", "deer", "cattle", "sheep" "proginy",
                     "first", "second", "third", "fourth", "fifth", "sixth", 
-                    "seventh", "eighth", "ninth", "tenth"
+                    "seventh", "eighth", "ninth", "tenth",
+                    "politics", "acoustics", "data"
                   ]
     subject = find_subject(sentence_dg)
     if subject[0]["word"].lower() not in stop_nouns:
