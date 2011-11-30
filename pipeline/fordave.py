@@ -20,12 +20,14 @@ from collections import defaultdict
 def plaintext(dg):
     return " ".join([node["word"] for node in dg.nodelist[1:]])
 
+
 def mapper(article, dg):
-    if " but he " in plaintext(dg):
-        yield "BUT",  plaintext(dg)
-    
-    if " when he " in plaintext(dg):
-        yield "WHEN", plaintext(dg)
+    if len(dg.nodelist) <= 12: 
+        if " but he " in plaintext(dg):
+            yield "BUT",  plaintext(dg)
+        
+        if " when he " in plaintext(dg):
+            yield "WHEN", plaintext(dg)
     
     
     
