@@ -22,7 +22,7 @@ def plaintext(dg):
 
 
 def mapper(article, dg):
-    if len(dg.nodelist) <= 15: 
+    if len(dg.nodelist) <= 12: 
         if " but he " in plaintext(dg):
             yield "BUT",  plaintext(dg)
         
