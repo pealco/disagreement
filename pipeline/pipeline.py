@@ -182,19 +182,19 @@ def convert_to_plaintext(data):
 def pipeline(article, sentence_dg):
     data = (article, sentence_dg)
     
-    functions = [remove_long_sentences,
-                 select_verbs,
-                 stopword_filter,
-                 root_is_verb_filter,
-                 cc_in_subject_filter,
-                 find_disagreement,
-                 wordnet_filter,
-                 preposition_filter,
-                 convert_to_plaintext]
+    pipeline_steps = [remove_long_sentences,
+                      select_verbs,
+                      stopword_filter,
+                      root_is_verb_filter,
+                      cc_in_subject_filter,
+                      find_disagreement,
+                      wordnet_filter,
+                      preposition_filter,
+                      convert_to_plaintext]
     
-    composed_function = compose(functions)
+    composed_pipeline = compose(pipeline_steps)
     
-    result = composed_function(data)
+    result = composed_pipeline(data)
     
     if result:
         yield result
