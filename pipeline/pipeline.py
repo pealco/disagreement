@@ -154,7 +154,9 @@ def cc_in_subject_filter(data):
         return article, sentence_dg
 
 @composable    
-def modify_tags(article, sentence_dg):
+def modify_tags(data):
+    article, sentence_dg = data
+    
     retagged_sentence = retag(sentence_dg)
     subject = find_subject(sentence_dg)
     
