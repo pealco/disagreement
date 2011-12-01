@@ -203,6 +203,7 @@ def modify_subject_tags(data):
 coordination_filter = preverb_filter_factory('CC', 'tag')
 you_filter          = preverb_filter_factory('you', 'word')
 comma_filter        = preverb_filter_factory(',', 'word')
+
 # Output converters
 
 @composable
@@ -221,6 +222,7 @@ def pipeline(article, sentence_dg):
                       root_is_verb_filter,
                       coordination_filter,
                       you_filter,
+                      comma_filter,
                       find_disagreement,
                       wordnet_filter,
                       preposition_filter,
