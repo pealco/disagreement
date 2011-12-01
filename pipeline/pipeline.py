@@ -166,6 +166,18 @@ def and_filter(data):
     
     if 'CC' not in preverb:
         return article, sentence_dg
+        
+@composable
+def you_filter(data):
+    """ Filters sentences with 'you' before the verb. """
+
+    article, sentence_dg = data
+    verb_address = sentence_dg.root["address"]
+
+    preverb = [sentence_dg.get_by_address(address)['word'] for address in xrange(verb_address)]
+
+    if 'you' not in preverb:
+        return article, sentence_dg
 
         
 @composable    
