@@ -199,7 +199,17 @@ def modify_subject_tags(data):
     sentence_dg.get_by_address(subject_address)['tag'] = new_subject_tag
     
     return article, sentence_dg
+
+@composable
+def post_verb_plural_filter(data):
+    article, sentence_dg = data
     
+    verb_address = sentence_dg.root["address"]
+    post_verb_address = verb_address + 1
+    
+    if sentence_dg.get_by_address(post_verb_address)['tag'] != 'NNS':
+        return article, sentence_dg
+
 coordination_filter = preverb_filter_factory('CC', 'tag')
 you_filter          = preverb_filter_factory('you', 'word')
 comma_filter        = preverb_filter_factory(',', 'word')
@@ -223,6 +233,7 @@ def pipeline(article, sentence_dg):
                       coordination_filter,
                       you_filter,
                       comma_filter,
+                      post_verb_plural_filter,
                       find_disagreement,
                       wordnet_filter,
                       preposition_filter,
