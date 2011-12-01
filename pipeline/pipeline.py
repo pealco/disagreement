@@ -81,6 +81,21 @@ def retag(sentence_dg):
     tokens = nltk.word_tokenize(raw)
     return TAGGER.tag(tokens)
 
+def preverb_filter_factory(token, attribute):
+    """ Creates a filter. """
+    
+    @composable
+    def filter_(data):
+        article, sentence_dg = data
+        verb_address = sentence_dg.root["address"]
+    
+        preverb = [sentence_dg.get_by_address(address)[attribute] for address in xrange(verb_address)]
+    
+        if token not in preverb:
+            return article, sentence_dg
+    
+    return filter_
+    
 ### Filters
 
 @composable
