@@ -236,6 +236,7 @@ def pipeline(article, sentence_dg):
                       stopword_filter,
                       root_is_verb_filter,
                       and_filter,
+                      you_filter,
                       find_disagreement,
                       wordnet_filter,
                       preposition_filter,
