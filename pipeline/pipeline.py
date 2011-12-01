@@ -255,5 +255,5 @@ if __name__ == '__main__':
     job.additer(pipeline, identityreducer)
     job.run()
     
-    sys.stdout.flush()
+    sys.stderr.flush()
     
