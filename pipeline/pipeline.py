@@ -151,7 +151,7 @@ def stopword_filter(data):
                   ]
     subject = find_subject(sentence_dg)
     
-    if not intersection(set(preverb), set(stop_nouns)):
+    if not set(preverb).intersection(set(stop_nouns)):
         return article, sentence_dg
 
 @composable
