@@ -202,6 +202,7 @@ def modify_subject_tags(data):
     
 coordination_filter = preverb_filter_factory('CC', 'tag')
 you_filter          = preverb_filter_factory('you', 'word')
+comma_filter        = preverb_filter_factory(',', 'word')
 # Output converters
 
 @composable
