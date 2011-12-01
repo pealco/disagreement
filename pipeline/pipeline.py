@@ -212,8 +212,6 @@ def post_verb_plural_filter(data):
         if post_verb_word['tag'] != 'NNS':
             return article, sentence_dg
     except TypeError:
-        print >> sys.stderr, plaintext(sentence_dg)
-        print >> sys.stderr, sentence_dg.root
         return False
 
 coordination_filter = preverb_filter_factory('CC', 'tag')
