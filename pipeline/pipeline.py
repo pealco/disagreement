@@ -254,3 +254,6 @@ if __name__ == '__main__':
     job = dumbo.Job()
     job.additer(pipeline, identityreducer)
     job.run()
+    
+    sys.stdout.flush()
+    
