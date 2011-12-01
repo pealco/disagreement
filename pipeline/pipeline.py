@@ -207,6 +207,7 @@ def post_verb_plural_filter(data):
     verb_address = sentence_dg.root["address"]
     post_verb_address = verb_address + 1
     post_verb_word = sentence_dg.get_by_address(post_verb_address)
+    print >> sys.stderr, post_verb_word
     
     if post_verb_word['tag'] != 'NNS':
         return article, sentence_dg
