@@ -208,10 +208,11 @@ def post_verb_plural_filter(data):
     
     verb_address = sentence_dg.root["address"]
     post_verb_address = verb_address + 1
-    post_verb_word = sentence_dg.get_by_address(post_verb_address)
-    if post_verb_word == -1: # Word not found.
-        return False 
     
+    if post_verb_address == len(sentence_dg.nodelist):
+        return False
+    
+    post_verb_word = sentence_dg.get_by_address(post_verb_address)
     if post_verb_word['tag'] != 'NNS':
         return article, sentence_dg
 
@@ -238,7 +239,7 @@ def pipeline(article, sentence_dg):
                       coordination_filter,
                       you_filter,
                       comma_filter,
-                      #post_verb_plural_filter,
+                      post_verb_plural_filter,
                       find_disagreement,
                       wordnet_filter,
                       preposition_filter,
