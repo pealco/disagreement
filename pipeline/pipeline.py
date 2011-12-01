@@ -135,6 +135,11 @@ def wordnet_filter(data):
 @composable
 def stopword_filter(data):
     article, sentence_dg = data
+    verb_address = sentence_dg.root["address"]
+
+    preverb = [sentence_dg.get_by_address(address)[attribute] for address in xrange(verb_address)]
+    
+    
     stop_nouns = ["number", "majority", "minority", "variety", "percent", 
                     "total", "none", "pair", "part", "km", "mm"
                     "species", "series", "variety", "rest", "percentage"
@@ -145,7 +150,8 @@ def stopword_filter(data):
                     "range", "group", "kind", "half"
                   ]
     subject = find_subject(sentence_dg)
-    if subject[0]["word"].lower() not in stop_nouns:
+    
+    if not intersection(set(preverb), set(stop_nouns)):
         return article, sentence_dg
 
 @composable
