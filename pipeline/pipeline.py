@@ -238,7 +238,7 @@ def pipeline(article, sentence_dg):
                       coordination_filter,
                       you_filter,
                       comma_filter,
-                      post_verb_plural_filter,
+                      #post_verb_plural_filter,
                       find_disagreement,
                       wordnet_filter,
                       preposition_filter,
