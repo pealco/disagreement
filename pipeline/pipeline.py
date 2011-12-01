@@ -156,7 +156,7 @@ def cc_in_subject_filter(data):
 
 @composable
 def and_filter(data):
-    """ Filters sentences with 'and' before the verb. """
+    """ Filters sentences with 'CC'-tagged items before the verb. """
     
     article, sentence_dg = data
     verb_address = sentence_dg.root["address"]
