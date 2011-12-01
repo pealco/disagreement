@@ -137,7 +137,7 @@ def stopword_filter(data):
     article, sentence_dg = data
     verb_address = sentence_dg.root["address"]
 
-    preverb = [sentence_dg.get_by_address(address)['word'] for address in xrange(verb_address)]
+    preverb = [sentence_dg.get_by_address(address)['word'].lower() for address in xrange(verb_address)]
     
     
     stop_nouns = ["number", "majority", "minority", "variety", "percent", 
