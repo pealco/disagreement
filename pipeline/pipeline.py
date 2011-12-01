@@ -207,12 +207,11 @@ def post_verb_plural_filter(data):
     verb_address = sentence_dg.root["address"]
     post_verb_address = verb_address + 1
     post_verb_word = sentence_dg.get_by_address(post_verb_address)
+    if post_verb_word == -1: # Word not found.
+        return False 
     
-    try:
-        if post_verb_word['tag'] != 'NNS':
-            return article, sentence_dg
-    except TypeError:
-        return False
+    if post_verb_word['tag'] != 'NNS':
+        return article, sentence_dg
 
 coordination_filter = preverb_filter_factory('CC', 'tag')
 you_filter          = preverb_filter_factory('you', 'word')
