@@ -147,7 +147,8 @@ def stopword_filter(data):
                     "first", "second", "third", "fourth", "fifth", "sixth", 
                     "seventh", "eighth", "ninth", "tenth",
                     "politics", "acoustics", "data", "media", "headquarters",
-                    "range", "group", "kind", "half"
+                    "range", "group", "kind", "half", "portion", "economics",
+                    "lot", "lots", "remainder", "amount", "host", "set"
                   ]
     subject = find_subject(sentence_dg)
     
