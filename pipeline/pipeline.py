@@ -142,7 +142,7 @@ def stopword_filter(data):
                     "first", "second", "third", "fourth", "fifth", "sixth", 
                     "seventh", "eighth", "ninth", "tenth",
                     "politics", "acoustics", "data", "media", "headquarters",
-                    "range"
+                    "range", "group", "kind", "half"
                   ]
     subject = find_subject(sentence_dg)
     if subject[0]["word"].lower() not in stop_nouns:
