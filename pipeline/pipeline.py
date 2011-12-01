@@ -8,6 +8,8 @@
 import os, sys
 from glob import glob
 
+sys.stderr.flush()
+
 sys.path += glob("/fs/clip-software/python-contrib-2.7.1.0/lib/python2.7/site-packages/*.egg")
 sys.path.append("/fs/clip-software/python-contrib-2.7.1.0/lib/python2.7/site-packages")
 
@@ -254,6 +256,4 @@ if __name__ == '__main__':
     job = dumbo.Job()
     job.additer(pipeline, identityreducer)
     job.run()
-    
-    sys.stderr.flush()
     
