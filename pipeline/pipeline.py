@@ -141,9 +141,9 @@ def stopword_filter(data):
     
     
     stop_nouns = ["number", "majority", "minority", "variety", "percent", 
-                    "total", "none", "pair", "part", "km", "mm"
-                    "species", "series", "variety", "rest", "percentage"
-                    "fish", "deer", "cattle", "sheep" "proginy",
+                    "total", "none", "pair", "part", "km", "mm",
+                    "species", "series", "variety", "rest", "percentage",
+                    "fish", "deer", "cattle", "sheep", "proginy",
                     "first", "second", "third", "fourth", "fifth", "sixth", 
                     "seventh", "eighth", "ninth", "tenth",
                     "politics", "acoustics", "data", "media", "headquarters",
