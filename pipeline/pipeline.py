@@ -160,40 +160,6 @@ def preposition_filter(data):
     subject_deps = subject[0]['deps']
     if any([sentence_dg.get_by_address(dep)['tag'] == 'IN' for dep in subject_deps]):
         return article, sentence_dg
-
-@composable
-def cc_in_subject_filter(data):
-    """ The subject should not contain coordination."""
-    article, sentence_dg = data
-    subject = find_subject(sentence_dg)
-    subject_deps = subject[0]['deps']
-    if not any([sentence_dg.get_by_address(dep)['tag'] == 'CC' for dep in subject_deps]):
-        return article, sentence_dg
-
-@composable
-def and_filter(data):
-    """ Filters sentences with 'CC'-tagged items before the verb. """
-    
-    article, sentence_dg = data
-    verb_address = sentence_dg.root["address"]
-    
-    preverb = [sentence_dg.get_by_address(address)['tag'] for address in xrange(verb_address)]
-    
-    if 'CC' not in preverb:
-        return article, sentence_dg
-        
-@composable
-def you_filter(data):
-    """ Filters sentences with 'you' before the verb. """
-
-    article, sentence_dg = data
-    verb_address = sentence_dg.root["address"]
-
-    preverb = [sentence_dg.get_by_address(address)['word'] for address in xrange(verb_address)]
-
-    if 'you' not in preverb:
-        return article, sentence_dg
-
         
 @composable    
 def modify_tags(data):
@@ -234,6 +200,8 @@ def modify_subject_tags(data):
     
     return article, sentence_dg
     
+coordination_filter = preverb_filter_factory('CC', 'tag')
+you_filter          = preverb_filter_factory('you', 'word')
 # Output converters
 
 @composable
@@ -250,7 +218,7 @@ def pipeline(article, sentence_dg):
                       select_verbs,
                       stopword_filter,
                       root_is_verb_filter,
-                      and_filter,
+                      coordination_filter,
                       you_filter,
                       find_disagreement,
                       wordnet_filter,
