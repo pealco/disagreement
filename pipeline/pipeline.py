@@ -247,7 +247,11 @@ def subject_intervener_pairs(data):
     article, sentence_dg = data
     
     subject = find_subject(sentence_dg)[0]
-    intervener = find_intervener(sentence_dg)
+    
+    try:
+        intervener = find_intervener(sentence_dg)
+    except IndexError:
+        return False
     
     sentence = plaintext(sentence_dg)
     
