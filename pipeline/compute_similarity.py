@@ -24,8 +24,11 @@ from nltk.corpus import wordnet as wn
 
 def mapper(subject, intervener):
     
-    subject_synset = wn.synsets(subject)[0]
-    intervener_synset = wn.synsets(intervener)[0]
+    try:
+        subject_synset = wn.synsets(subject)[0]
+        intervener_synset = wn.synsets(intervener)[0]
+    except:
+        return
     
     yield (subject, intervener), subject_synset.wup_similarity(intervener_synset)
     
