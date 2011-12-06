@@ -177,7 +177,7 @@ def preposition_filter(data):
     subject_deps = subject[0]['deps']
     if any([sentence_dg.get_by_address(dep)['tag'] == 'IN' for dep in subject_deps]):
         return article, sentence_dg
-        
+    
 @composable    
 def modify_tags(data):
     article, sentence_dg = data
@@ -242,6 +242,17 @@ def convert_to_plaintext(data):
     article, sentence_dg = data
     return article, plaintext(sentence_dg)
 
+@composable
+def subject_intervener_pairs(data):
+    article, sentence_dg = data
+    
+    subject = find_subject(sentence_dg)[0]
+    intervener = find_intervener(sentence_dg)
+    
+    sentence = plaintext(sentence_dg)
+    
+    return (subject, intervener), sentence
+
 # Composed pipeline
 
 def pipeline(article, sentence_dg):
@@ -258,7 +269,7 @@ def pipeline(article, sentence_dg):
                       find_disagreement,
                       wordnet_filter,
                       preposition_filter,
-                      convert_to_plaintext]
+                      subject_intervener_pairs]
     
     composed_pipeline = compose(pipeline_steps)
     
