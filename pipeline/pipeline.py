@@ -2,7 +2,7 @@
 # May 9, 2010
 # Finding agreement errors in Wikipedia using Hadoop
 # Call with:
-# dumbo start pipeline.py -input /user/pealco/wikipedia_split_parsed_deduped_dgs  -output /user/pealco/disagreement_subj_int_pairs -overwrite yes -hadoop h -memlimit 4294967296 
+# dumbo start pipeline.py -input /user/pealco/wikipedia_split_parsed_deduped_dgs  -output /user/pealco/disagreement_subj_int_good_pairs -overwrite yes -hadoop h -memlimit 4294967296 
 # -file braubt_tagger.pkl
 
 import os, sys
@@ -130,6 +130,19 @@ def find_disagreement(data):
     
     if subject_tag in NUMBER and verb_tag in NUMBER:
         if NUMBER[subject_tag] != NUMBER[verb_tag]:
+            return article, sentence_dg
+            
+#
+@composable
+def find_agreement(data):
+    article, sentence_dg = data
+    subject = find_subject(sentence_dg)
+    subject_tag = subject[0]["tag"]
+    verb = sentence_dg.root
+    verb_tag = sentence_dg.root["tag"]
+    
+    if subject_tag in NUMBER and verb_tag in NUMBER:
+        if NUMBER[subject_tag] == NUMBER[verb_tag]:
             return article, sentence_dg
 
 @composable
@@ -271,7 +284,7 @@ def pipeline(article, sentence_dg):
                       you_filter,
                       comma_filter,
                       post_verb_plural_filter,
-                      find_disagreement,
+                      find_agreement,
                       wordnet_filter,
                       preposition_filter,
                       subject_intervener_pairs]
