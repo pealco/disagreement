@@ -104,7 +104,7 @@ def find_intervener(sentence_dg):
     prepositions = [sentence_dg.get_by_address(dep)['tag'] == 'IN' for dep in subject_deps]
     first_prep = prepositions[0]
     interver_address = dg.get_by_address(first_prep['deps'][0])
-        return sentence_dg.get_by_address(interver_address)['word']
+    return sentence_dg.get_by_address(interver_address)['word']
 
 ### Filters
 
