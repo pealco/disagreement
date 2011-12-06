@@ -31,8 +31,13 @@ def mapper(subject, intervener):
         intervener_synset = wn.synsets(intervener)[0]
     except:
         return
+        
+    try:
+        similarity = subject_synset.lin_similarity(intervener_synset, brown_ic)
+    except:
+        return
     
-    yield (subject, intervener), subject_synset.lin_similarity(intervener_synset, brown_ic)
+    yield (subject, intervener), similarity
     
 
 if __name__ == '__main__':
