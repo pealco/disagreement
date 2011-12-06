@@ -97,7 +97,15 @@ def preverb_filter_factory(token, attribute):
             return article, sentence_dg
     
     return filter_
-    
+
+def find_intervener(sentence_dg):
+    subject = find_subject(sentence_dg)
+    subject_deps = subject[0]['deps']
+    prepositions = [sentence_dg.get_by_address(dep)['tag'] == 'IN' for dep in subject_deps]
+    first_prep = prepositions[0]
+    interver_address = dg.get_by_address(first_prep['deps'][0])
+        return sentence_dg.get_by_address(interver_address)['word']
+
 ### Filters
 
 @composable
