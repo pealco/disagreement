@@ -2,7 +2,7 @@
 #
 # Wikipedia wordcount
 # Call with:
-# dumbo start compute_similarity.py -input /user/pealco/disagreement_subj_int  -output /user/pealco/disagreement_similarity_bad -overwrite yes -hadoop h -memlimit 4294967296
+# dumbo start compute_similarity.py -input /user/pealco/disagreement_subj_int_pairs  -output /user/pealco/disagreement_similarity_bad -overwrite yes -hadoop h -memlimit 4294967296
 
 import os, sys
 from glob import glob
@@ -22,9 +22,7 @@ from collections import defaultdict
 nltk.data.path += ["/fs/clip-software/nltk-2.0b9-data"]
 from nltk.corpus import wordnet as wn
 
-def mapper(data):
-    pair, sentence = data
-    subject, intervener = pair
+def mapper(subject, intervener):
     
     subject_synset, intervener_synset = wn.synsets(subject)[0], wn.synset(intervener)[0]
     
