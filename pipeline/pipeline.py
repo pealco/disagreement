@@ -255,7 +255,8 @@ def subject_intervener_pairs(data):
     
     sentence = plaintext(sentence_dg)
     
-    return (subject, intervener), sentence
+    #return (subject, intervener), sentence
+    return subject, intervener
 
 # Composed pipeline
 
