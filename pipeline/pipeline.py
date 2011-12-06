@@ -105,6 +105,7 @@ def find_intervener(sentence_dg):
     first_prep = prepositions[0]
     intervener_address = sentence_dg.get_by_address(first_prep['deps'][0])
     print >> sys.stderr, 'DEBUG', intervener_address
+    print >> sys.stderr, 'SENTENCE', plaintext(sentence_dg)
     return sentence_dg.get_by_address(intervener_address)['word']
 
 ### Filters
