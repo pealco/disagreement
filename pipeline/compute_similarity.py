@@ -21,8 +21,10 @@ from collections import defaultdict
 
 nltk.data.path += ["/fs/clip-software/nltk-2.0b9-data"]
 from nltk.corpus import wordnet as wn
+from nltk.corpus import wordnet_ic
 
 def mapper(subject, intervener):
+    brown_ic = wordnet_ic.ic('ic-brown.dat')
     
     try:
         subject_synset = wn.synsets(subject)[0]
@@ -30,7 +32,7 @@ def mapper(subject, intervener):
     except:
         return
     
-    yield (subject, intervener), subject_synset.wup_similarity(intervener_synset)
+    yield (subject, intervener), subject_synset.lin_similarity(intervener_synset, brown_ic)
     
 
 if __name__ == '__main__':
