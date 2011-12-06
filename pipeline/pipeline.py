@@ -101,7 +101,7 @@ def preverb_filter_factory(token, attribute):
 def find_intervener(sentence_dg):
     subject = find_subject(sentence_dg)
     subject_deps = subject[0]['deps']
-    prepositions = [sentence_dg.get_by_address(dep)['word'] for dep in subject_deps if sentence_dg.get_by_address(dep)['tag'] == 'IN']
+    prepositions = [sentence_dg.get_by_address(dep) for dep in subject_deps if sentence_dg.get_by_address(dep)['tag'] == 'IN']
     first_prep = prepositions[0]
     interver_address = sentence_dg.get_by_address(first_prep['deps'][0])
     return sentence_dg.get_by_address(interver_address)['word']
