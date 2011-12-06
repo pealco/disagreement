@@ -27,7 +27,7 @@ def mapper(subject, intervener):
     subject_synset = wn.synsets(subject)[0]
     intervener_synset = wn.synsets(intervener)[0]
     
-    yield pair, subject_synset.wup_similarity(intervener_synset)
+    yield (subject, intervener), subject_synset.wup_similarity(intervener_synset)
     
 
 if __name__ == '__main__':
