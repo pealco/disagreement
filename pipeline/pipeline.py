@@ -98,6 +98,21 @@ def preverb_filter_factory(token, attribute):
     
     return filter_
 
+#
+def sentence_filter_factory(word):
+    """ Creates a filter. """
+    
+    @composable
+    def filter_(data):
+        article, sentence_dg = data
+        
+        sentence = plaintext(sentence_dg)
+    
+        if word not in sentence:
+            return article, sentence_dg
+    
+    return filter_
+
 def find_intervener(sentence_dg):
     subject = find_subject(sentence_dg)
     subject_deps = subject[0]['deps']
@@ -237,6 +252,11 @@ def post_verb_plural_filter(data):
 coordination_filter = preverb_filter_factory('CC', 'tag')
 you_filter          = preverb_filter_factory('you', 'word')
 comma_filter        = preverb_filter_factory(',', 'word')
+colon_filter        = sentence_filter_factory(":")
+dollar_filter       = sentence_filter_factory("$")
+question_filter     = sentence_filter_factory("?")
+quote_filter        = sentence_filter_factory('"')
+percent_filter      = sentence_filter_factory('%')
 
 # Output converters
 
@@ -304,6 +324,11 @@ def pipeline(article, sentence_dg):
                       coordination_filter,
                       you_filter,
                       comma_filter,
+                      colon_filter,       
+                      dollar_filter,      
+                      question_filter,    
+                      quote_filter,       
+                      percent_filter,     
                       post_verb_plural_filter,
                       wordnet_filter,
                       preposition_filter,
