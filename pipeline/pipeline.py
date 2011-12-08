@@ -92,8 +92,6 @@ def find_intervener(sentence_dg):
     intervener = sentence_dg.get_by_address(first_prep['deps'][0])
     return intervener
 
-### Content filters
-
 def content_filter(string, attribute='word', scope='sentence'):
     
     @composable
@@ -113,6 +111,10 @@ def content_filter(string, attribute='word', scope='sentence'):
             raise ValueError, "The scope '%s' is not defined. Defined scopes are 'sentence' and 'preverb'." % scope
     
     return filter_
+
+### Content filters
+
+
 
 def stopword_filter(data):
     filters = [content_filter(word) for word in STOPWORDS]
