@@ -23,8 +23,9 @@ nltk.data.path += ["/fs/clip-software/nltk-2.0b9-data"]
 from nltk.corpus import wordnet as wn
 from nltk.corpus import wordnet_ic
 
-def mapper(subject, intervener):
+def mapper(pair, grammaticality):
     brown_ic = wordnet_ic.ic('ic-brown.dat')
+    subject, intervener = pair
     
     try:
         subject_synset = wn.synsets(subject)[0]
@@ -37,7 +38,7 @@ def mapper(subject, intervener):
     except:
         return
     
-    yield (subject, intervener), similarity
+    yield gram, similarity
     
 
 if __name__ == '__main__':
