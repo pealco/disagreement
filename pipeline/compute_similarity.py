@@ -35,10 +35,11 @@ def mapper(pair, grammaticality):
         
     try:
         similarity = subject_synset.lin_similarity(intervener_synset, brown_ic)
+        yield grammaticality, similarity
     except:
-        return
+        pass
     
-    yield grammaticality, similarity
+    
     
 
 if __name__ == '__main__':
