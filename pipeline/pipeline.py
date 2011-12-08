@@ -277,6 +277,20 @@ def subject_intervener_pairs(data):
     #return (subject, intervener), sentence
     return key, (subject, intervener, plaintext(sentence_dg))
 
+@composable
+def compute_similarity(grammaticality, triplet):
+    #brown_ic = wordnet_ic.ic('ic-brown.dat')
+    subject, intervener, sentence = triplet
+    
+    try:
+        subject_synset = wn.synsets(subject)[0]
+        intervener_synset = wn.synsets(intervener)[0]
+        similarity = subject_synset.wup_similarity(intervener_synset)
+        yield sentence, (grammaticality, similarity, subject, intervener) 
+    except:
+        return False
+        
+
 # Composed pipeline
 
 def pipeline(article, sentence_dg):
@@ -293,7 +307,8 @@ def pipeline(article, sentence_dg):
                       wordnet_filter,
                       preposition_filter,
                       find_agreement,
-                      subject_intervener_pairs]
+                      subject_intervener_pairs,
+                      compute_similarity]
     
     composed_pipeline = compose(pipeline_steps)
     
