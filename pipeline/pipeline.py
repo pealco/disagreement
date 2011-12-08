@@ -11,7 +11,6 @@ from glob import glob
 sys.path += glob("/fs/clip-software/python-contrib-2.7.1.0/lib/python2.7/site-packages/*.egg")
 sys.path.append("/fs/clip-software/python-contrib-2.7.1.0/lib/python2.7/site-packages")
 
-from cPickle import load
 from functools import partial
 
 import nltk
@@ -35,9 +34,6 @@ NUMBER = {  "VBZ" : "SG",
             "NN"  : "SG",
             "NNS" : "PL" }
             
-#input = open('braubt_tagger.pkl', 'rb')
-#TAGGER = load(input)
-#input.close()            
 
 ### Function composition.
 
@@ -75,10 +71,6 @@ def find_subject(dg):
 def plaintext(dg):
     return " ".join([node["word"] for node in dg.nodelist[1:]])
 
-def retag(sentence_dg):
-    raw = plaintext(sentence_dg)
-    tokens = nltk.word_tokenize(raw)
-    return TAGGER.tag(tokens)
 
 def preverb_filter_factory(token, attribute):
     """ Creates a filter. """
@@ -194,43 +186,16 @@ def preposition_filter(data):
         return article, sentence_dg
     
 @composable    
-def modify_tags(data):
     article, sentence_dg = data
     
-    retagged_sentence = retag(sentence_dg)
-    subject = find_subject(sentence_dg)
     
-    subject_address = subject[0]['address']
-    verb_address    = sentence_dg.root['address']
     
-    try:
-        verb_word, new_verb_tag = retagged_sentence[verb_address]
-        subject_word, new_subject_tag = retagged_sentence[subject_address]
-    except IndexError:
-        return False
-    
-    sentence_dg.get_by_address(verb_address)['tag'] = new_verb_tag
-    sentence_dg.get_by_address(subject_address)['tag'] = new_subject_tag
-    
-    return article, sentence_dg
-
 @composable
-def modify_subject_tags(data):
     article, sentence_dg = data
     
-    retagged_sentence = retag(sentence_dg)
-    subject = find_subject(sentence_dg)
-    
-    subject_address = subject[0]['address']
-    
     try:
-        subject_word, new_subject_tag = retagged_sentence[subject_address]
     except IndexError:
         return False
-    
-    sentence_dg.get_by_address(subject_address)['tag'] = new_subject_tag
-    
-    return article, sentence_dg
 
 @composable
 def post_verb_plural_filter(data):
