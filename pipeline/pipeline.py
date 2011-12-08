@@ -286,7 +286,7 @@ def compute_similarity(grammaticality, triplet):
         subject_synset = wn.synsets(subject)[0]
         intervener_synset = wn.synsets(intervener)[0]
         similarity = subject_synset.wup_similarity(intervener_synset)
-        yield sentence, (grammaticality, similarity, subject, intervener) 
+        return sentence, (grammaticality, similarity, subject, intervener) 
     except:
         return False
         
