@@ -251,7 +251,7 @@ def find_agreement(data):
     if subject_tag in NUMBER and verb_tag in NUMBER:
         if NUMBER[subject_tag] == NUMBER[verb_tag]:
             return "GRAM", sentence_dg
-        elif NUMBER[subject_tag] != NUMBER[verb_tag]::
+        elif NUMBER[subject_tag] != NUMBER[verb_tag]:
             return  "UNGRAM", sentence_dg
             
             
