@@ -38,7 +38,7 @@ def mapper(pair, grammaticality):
     except:
         return
     
-    yield gram, similarity
+    yield grammaticality, similarity
     
 
 if __name__ == '__main__':
