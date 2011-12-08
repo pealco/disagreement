@@ -133,17 +133,7 @@ def find_disagreement(data):
             return article, sentence_dg
             
 #
-@composable
-def find_agreement(data):
-    article, sentence_dg = data
-    subject = find_subject(sentence_dg)
-    subject_tag = subject[0]["tag"]
-    verb = sentence_dg.root
-    verb_tag = sentence_dg.root["tag"]
-    
-    if subject_tag in NUMBER and verb_tag in NUMBER:
-        if NUMBER[subject_tag] == NUMBER[verb_tag]:
-            return article, sentence_dg
+
 
 @composable
 def wordnet_filter(data):
@@ -251,13 +241,29 @@ comma_filter        = preverb_filter_factory(',', 'word')
 # Output converters
 
 @composable
-def convert_to_plaintext(data):
+def find_agreement(data):
     article, sentence_dg = data
-    return article, plaintext(sentence_dg)
+    subject = find_subject(sentence_dg)
+    subject_tag = subject[0]["tag"]
+    verb = sentence_dg.root
+    verb_tag = sentence_dg.root["tag"]
+    
+    if subject_tag in NUMBER and verb_tag in NUMBER:
+        if NUMBER[subject_tag] == NUMBER[verb_tag]:
+            return "GRAM", sentence_dg
+        elif NUMBER[subject_tag] != NUMBER[verb_tag]::
+            return  "UNGRAM", sentence_dg
+            
+            
+
+@composable
+def convert_to_plaintext(data):
+    key, sentence_dg = data
+    return key, plaintext(sentence_dg)
 
 @composable
 def subject_intervener_pairs(data):
-    article, sentence_dg = data
+    key, sentence_dg = data
     
     subject = find_subject(sentence_dg)[0]['word']
     
@@ -269,7 +275,7 @@ def subject_intervener_pairs(data):
     sentence = plaintext(sentence_dg)
     
     #return (subject, intervener), sentence
-    return subject, intervener
+    return (subject, intervener), key
 
 # Composed pipeline
 
@@ -284,9 +290,9 @@ def pipeline(article, sentence_dg):
                       you_filter,
                       comma_filter,
                       post_verb_plural_filter,
-                      find_agreement,
                       wordnet_filter,
                       preposition_filter,
+                      find_agreement,
                       subject_intervener_pairs]
     
     composed_pipeline = compose(pipeline_steps)
