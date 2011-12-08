@@ -99,7 +99,7 @@ def content_filter(string, attribute='word', scope='sentence'):
         article, sentence_dg = data
     
         if scope == 'sentence':
-            matches = [node for node in sentence_dg.nodelist if node[attribute] == string]
+            matches = [node for node in sentence_dg.nodelist if node[attribute].lower() == string.lower()]
             if not matches:
                 return article, sentence_dg
         elif scope == 'preverb':
