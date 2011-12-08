@@ -2,7 +2,7 @@
 #
 # Wikipedia wordcount
 # Call with:
-# dumbo start compute_similarity.py -input /user/pealco/disagreement_subj_int_pairs  -output /user/pealco/disagreement_lin_similarity -overwrite yes -hadoop h -memlimit 4294967296
+# dumbo start compute_similarity.py -input /user/pealco/disagreement_subj_int_pairs  -output /user/pealco/disagreement_wup_similarity -overwrite yes -hadoop h -memlimit 4294967296
 
 import os, sys
 from glob import glob
@@ -21,10 +21,10 @@ from collections import defaultdict
 
 nltk.data.path += ["/fs/clip-software/nltk-2.0b9-data"]
 from nltk.corpus import wordnet as wn
-from nltk.corpus import wordnet_ic
+#from nltk.corpus import wordnet_ic
 
 def mapper(pair, grammaticality):
-    brown_ic = wordnet_ic.ic('ic-brown.dat')
+    #brown_ic = wordnet_ic.ic('ic-brown.dat')
     subject, intervener = pair
     
     try:
@@ -34,7 +34,7 @@ def mapper(pair, grammaticality):
         pass
         
     try:
-        similarity = subject_synset.lin_similarity(intervener_synset, brown_ic)
+        similarity = subject_synset.wup_similarity(intervener_synset)
         yield grammaticality, similarity
     except:
         pass
