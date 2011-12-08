@@ -2,8 +2,10 @@
 # May 9, 2011
 # Finding agreement errors in Wikipedia using Hadoop
 # Call with:
-# dumbo start pipeline.py -input /user/pealco/wikipedia_split_parsed_deduped_dgs  -output /user/pealco/disagreement_subj_int_pairs -overwrite yes -hadoop h -memlimit 4294967296 
-# -file braubt_tagger.pkl
+# dumbo start pipeline.py \
+#    -input /user/pealco/wikipedia_split_parsed_deduped_dgs \
+#    -output /user/pealco/disagreement_subj_int_pairs \
+#    -overwrite yes -hadoop h -memlimit 4294967296 
 
 import os, sys
 from glob import glob
@@ -32,8 +34,20 @@ NUMBER = {  "VBZ" : "SG",
             "VBP" : "PL",
             "VB"  : "PL",
             "NN"  : "SG",
-            "NNS" : "PL" }
-            
+            "NNS" : "PL"
+}
+
+STOPWORDS = ["number", "majority", "minority", "variety", "percent", 
+                "total", "none", "pair", "part", "km", "mm",
+                "species", "series", "variety", "rest", "percentage",
+                "fish", "deer", "cattle", "sheep", "proginy",
+                "first", "second", "third", "fourth", "fifth", "sixth", 
+                "seventh", "eighth", "ninth", "tenth",
+                "politics", "acoustics", "data", "media", "headquarters",
+                "range", "group", "kind", "half", "portion", "economics",
+                "lot", "lots", "remainder", "amount", "host", "set", "list",
+                ',', ':', '$', '?', '"', '%',
+]
 
 ### Function composition.
 
@@ -47,7 +61,6 @@ def composable(f):
     
 def compose(functions):
     return reduce(lambda x, y: x + y, functions)
-
 
 def fail_gracefully(func):
     def wrapper(data):
@@ -71,46 +84,43 @@ def find_subject(dg):
 def plaintext(dg):
     return " ".join([node["word"] for node in dg.nodelist[1:]])
 
-
-def preverb_filter_factory(token, attribute):
-    """ Creates a filter. """
-    
-    @composable
-    def filter_(data):
-        article, sentence_dg = data
-        verb_address = sentence_dg.root["address"]
-    
-        preverb = [sentence_dg.get_by_address(address)[attribute] for address in xrange(verb_address)]
-    
-        if token not in preverb:
-            return article, sentence_dg
-    
-    return filter_
-
-#
-def sentence_filter_factory(word):
-    """ Creates a filter. """
-    
-    @composable
-    def filter_(data):
-        article, sentence_dg = data
-        
-        sentence = plaintext(sentence_dg)
-    
-        if word not in sentence:
-            return article, sentence_dg
-    
-    return filter_
-
 def find_intervener(sentence_dg):
     subject = find_subject(sentence_dg)
     subject_deps = subject[0]['deps']
     prepositions = [sentence_dg.get_by_address(dep) for dep in subject_deps if sentence_dg.get_by_address(dep)['tag'] == 'IN']
     first_prep = prepositions[0]
     intervener = sentence_dg.get_by_address(first_prep['deps'][0])
-    return intervener['word']
+    return intervener
 
-### Filters
+### Content filters
+
+def content_filter(string, attribute='word', scope='sentence'):
+    
+    @composable
+    def filter_(data):
+        article, sentence_dg = data
+    
+        if scope == 'sentence':
+            matches = [node for node in sentence_dg.nodelist if node[attribute] == string]
+            if not matches:
+                return article, sentence_dg
+        elif scope == 'preverb':
+            verb_address = sentence_dg.root["address"]
+            preverb = [sentence_dg.get_by_address(address)[attribute] for address in xrange(1, verb_address)]
+            if string not in preverb:
+                return article, sentence_dg
+        else:
+            raise ValueError, "The scope '%s' is not defined. Defined scopes are 'sentence' and 'preverb'." % scope
+    
+    return filter_
+
+def stopword_filter(data):
+    filters = [content_filter(word) for word in STOPWORDS]
+        
+    composed_stopword_filter = compose(filters)
+    return composed_stopword_filter(data)
+
+### Structure filters
 
 @composable
 def remove_long_sentences(data):
@@ -135,9 +145,6 @@ def find_disagreement(data):
     if subject_tag in NUMBER and verb_tag in NUMBER:
         if NUMBER[subject_tag] != NUMBER[verb_tag]:
             return article, sentence_dg
-            
-#
-
 
 @composable
 def wordnet_filter(data):
@@ -145,29 +152,6 @@ def wordnet_filter(data):
     """returns only sentence with subjects that are in wordnet."""    
     subject = find_subject(sentence_dg)[0]["word"]
     if wn.synsets(subject):
-        return article, sentence_dg
-
-@composable
-def stopword_filter(data):
-    article, sentence_dg = data
-    verb_address = sentence_dg.root["address"]
-
-    preverb = [sentence_dg.get_by_address(address)['word'].lower() for address in xrange(1, verb_address)]
-    
-    
-    stop_nouns = ["number", "majority", "minority", "variety", "percent", 
-                    "total", "none", "pair", "part", "km", "mm",
-                    "species", "series", "variety", "rest", "percentage",
-                    "fish", "deer", "cattle", "sheep", "proginy",
-                    "first", "second", "third", "fourth", "fifth", "sixth", 
-                    "seventh", "eighth", "ninth", "tenth",
-                    "politics", "acoustics", "data", "media", "headquarters",
-                    "range", "group", "kind", "half", "portion", "economics",
-                    "lot", "lots", "remainder", "amount", "host", "set", "list"
-                  ]
-    subject = find_subject(sentence_dg)
-    
-    if not set(preverb).intersection(set(stop_nouns)):
         return article, sentence_dg
 
 @composable
@@ -184,18 +168,27 @@ def preposition_filter(data):
     subject_deps = subject[0]['deps']
     if any([sentence_dg.get_by_address(dep)['tag'] == 'IN' for dep in subject_deps]):
         return article, sentence_dg
-    
-@composable    
+
+@composable
+def keep_singular_subjects(data):
     article, sentence_dg = data
     
+    subject = find_subject(sentence_dg)[0]
     
+    if NUMBER[subject['tag']] == 'SG':
+        return article, sentence_dg
     
 @composable
+def keep_plural_intervenors(data):
     article, sentence_dg = data
     
     try:
+        intervener = find_intervener(sentence_dg)
     except IndexError:
         return False
+        
+    if NUMBER[intervener['tag']] == "PL":
+        return article, sentence_dg    
 
 @composable
 def post_verb_plural_filter(data):
@@ -211,14 +204,12 @@ def post_verb_plural_filter(data):
     if post_verb_word['tag'] != 'NNS':
         return article, sentence_dg
 
-coordination_filter = preverb_filter_factory('CC', 'tag')
-you_filter          = preverb_filter_factory('you', 'word')
-comma_filter        = preverb_filter_factory(',', 'word')
-colon_filter        = sentence_filter_factory(":")
-dollar_filter       = sentence_filter_factory("$")
-question_filter     = sentence_filter_factory("?")
-quote_filter        = sentence_filter_factory('"')
-percent_filter      = sentence_filter_factory('%')
+content_filters = [
+    content_filter(('you', 'word'), 'preverb'),
+    content_filter(('CC',  'tag'),  'sentence'), 
+]
+
+composed_content_filters = compose(content_filters)
 
 # Output converters
 
@@ -250,7 +241,7 @@ def subject_intervener_pairs(data):
     subject = find_subject(sentence_dg)[0]['word']
     
     try:
-        intervener = find_intervener(sentence_dg)
+        intervener = find_intervener(sentence_dg)['word']
     except IndexError:
         return False
     
@@ -279,18 +270,10 @@ def compute_similarity(data):
 def pipeline(article, sentence_dg):
     data = (article, sentence_dg)
     
-    pipeline_steps = [remove_long_sentences,
-                      select_verbs,
-                      stopword_filter,
-                      root_is_verb_filter,
-                      coordination_filter,
-                      you_filter,
-                      comma_filter,
-                      colon_filter,       
-                      dollar_filter,      
-                      question_filter,    
-                      quote_filter,       
-                      percent_filter,     
+    pipeline_steps = [remove_long_sentences,    # Filter out sentences whose length is greater than MAX_LENGTH.
+                      select_verbs,             # Filter out sentences without approved verbs.
+                      stopword_filter,          # Filter out sentences that contain words in the stopword list.
+                      root_is_verb_filter,      # Filter out sentences whose root node is a not a verb.
                       post_verb_plural_filter,
                       wordnet_filter,
                       preposition_filter,
