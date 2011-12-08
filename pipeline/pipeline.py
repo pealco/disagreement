@@ -278,8 +278,9 @@ def subject_intervener_pairs(data):
     return key, (subject, intervener, plaintext(sentence_dg))
 
 @composable
-def compute_similarity(grammaticality, triplet):
+def compute_similarity(data):
     #brown_ic = wordnet_ic.ic('ic-brown.dat')
+    grammaticality, triplet = data
     subject, intervener, sentence = triplet
     
     try:
