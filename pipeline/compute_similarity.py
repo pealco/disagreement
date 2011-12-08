@@ -2,7 +2,7 @@
 #
 # Wikipedia wordcount
 # Call with:
-# dumbo start compute_similarity.py -input /user/pealco/disagreement_subj_int_pairs  -output /user/pealco/disagreement_similarity_bad -overwrite yes -hadoop h -memlimit 4294967296
+# dumbo start compute_similarity.py -input /user/pealco/disagreement_subj_int_pairs  -output /user/pealco/disagreement_lin_similarity -overwrite yes -hadoop h -memlimit 4294967296
 
 import os, sys
 from glob import glob
@@ -31,7 +31,7 @@ def mapper(pair, grammaticality):
         subject_synset = wn.synsets(subject)[0]
         intervener_synset = wn.synsets(intervener)[0]
     except:
-        return
+        pass
         
     try:
         similarity = subject_synset.lin_similarity(intervener_synset, brown_ic)
