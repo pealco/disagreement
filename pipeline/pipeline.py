@@ -11,7 +11,6 @@ from glob import glob
 sys.path += glob("/fs/clip-software/python-contrib-2.7.1.0/lib/python2.7/site-packages/*.egg")
 sys.path.append("/fs/clip-software/python-contrib-2.7.1.0/lib/python2.7/site-packages")
 
-import re
 from cPickle import load
 from functools import partial
 
