@@ -138,6 +138,17 @@ def select_verbs(data):
         return article, sentence_dg
 
 @composable
+def correct_tags_filter(data):
+    article, sentence_dg = data
+    subject = find_subject(sentence_dg)
+    subject_tag = subject[0]["tag"]
+    verb = sentence_dg.root
+    verb_tag = sentence_dg.root["tag"]
+
+    if subject_tag in NUMBER and verb_tag in NUMBER:
+        return article, sentence_dg
+
+@composable
 def find_disagreement(data):
     article, sentence_dg = data
     subject = find_subject(sentence_dg)
@@ -277,6 +288,7 @@ def pipeline(article, sentence_dg):
     
     pipeline_steps = [remove_long_sentences,    # Filter out sentences whose length is greater than MAX_LENGTH.
                       select_verbs,             # Filter out sentences without approved verbs.
+                      correct_tags_filter,
                       stopword_filter,          # Filter out sentences that contain words in the stopword list.
                       composed_content_filters,
                       root_is_verb_filter,      # Filter out sentences whose root node is a not a verb.
