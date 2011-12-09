@@ -208,8 +208,8 @@ def post_verb_plural_filter(data):
         return article, sentence_dg
 
 content_filters = [
-    content_filter(('you', 'word'), 'preverb'),
-    content_filter(('CC',  'tag'),  'sentence'), 
+    content_filter('you', 'word', scope='preverb'),
+    content_filter('CC',  attribute='tag',  scope='sentence'), 
 ]
 
 composed_content_filters = compose(content_filters)
