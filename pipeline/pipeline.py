@@ -206,6 +206,8 @@ def post_verb_plural_filter(data):
     post_verb_word = sentence_dg.get_by_address(post_verb_address)
     if post_verb_word['tag'] != 'NNS':
         return article, sentence_dg
+    if post_verb_word['word'] != '.':
+        return article, sentence_dg
 
 content_filters = [
     content_filter('you', 'word', scope='preverb'),
