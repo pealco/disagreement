@@ -46,6 +46,7 @@ STOPWORDS = ["number", "majority", "minority", "variety", "percent",
                 "politics", "acoustics", "data", "media", "headquarters",
                 "range", "group", "kind", "half", "portion", "economics",
                 "lot", "lots", "remainder", "amount", "host", "set", "list",
+                "minimum", "maximum",
                 ',', ':', '$', '?', '"', '%',
 ]
 
@@ -99,7 +100,10 @@ def content_filter(string, attribute='word', scope='sentence'):
         article, sentence_dg = data
     
         if scope == 'sentence':
-            matches = [node for node in sentence_dg.nodelist if node[attribute].lower() == string.lower()]
+            try:
+                matches = [node for node in sentence_dg.nodelist if node[attribute].lower() == string.lower()]
+            except AttributeError:
+                return False
             if not matches:
                 return article, sentence_dg
         elif scope == 'preverb':
