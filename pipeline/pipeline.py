@@ -283,6 +283,8 @@ def pipeline(article, sentence_dg):
                       post_verb_plural_filter,
                       wordnet_filter,
                       preposition_filter,
+                      keep_singular_subjects,
+                      keep_plural_intervenors,
                       find_agreement,
                       subject_intervener_pairs,
                       compute_similarity]
