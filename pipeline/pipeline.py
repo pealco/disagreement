@@ -100,10 +100,7 @@ def content_filter(string, attribute='word', scope='sentence'):
         article, sentence_dg = data
     
         if scope == 'sentence':
-            try:
-                matches = [node for node in sentence_dg.nodelist if node[attribute].lower() == string.lower()]
-            except AttributeError:
-                return False
+            matches = [node for node in sentence_dg.nodelist[1:] if node[attribute].lower() == string.lower()]
             if not matches:
                 return article, sentence_dg
         elif scope == 'preverb':
