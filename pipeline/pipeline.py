@@ -142,7 +142,10 @@ def correct_tags_filter(data):
     article, sentence_dg = data
     subject = find_subject(sentence_dg)
     subject_tag = subject[0]["tag"]
-    intervener = find_intervener(sentence_dg)
+    try:
+        intervener = find_intervener(sentence_dg)
+    except IndexError:
+        return False
     intervener_tag = intervener["tag"]
     verb = sentence_dg.root
     verb_tag = sentence_dg.root["tag"]
