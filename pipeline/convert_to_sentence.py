@@ -70,9 +70,10 @@ class Sentence(object):
         prepositions = [self.dg.get_by_address(dep) for dep in subject_deps if self.dg.get_by_address(dep)['tag'] == 'IN']
         try:
             first_prep = prepositions[0]
+            intervenor = self.dg.get_by_address(first_prep['deps'][0])
         except IndexError:
             return None
-        intervenor = self.dg.get_by_address(first_prep['deps'][0])
+        
         return intervenor
     
     def _root_dependencies(self, dg): 
