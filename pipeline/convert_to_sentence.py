@@ -69,7 +69,7 @@ class Sentence(object):
         return [dg.get_by_address(dep) for dep in dg.get_by_address(node["address"])["deps"]]
     
     def _find_subject(self):
-        return [node for node in _root_dependencies(self.dg) if node["rel"] == "SBJ"]
+        return [node for node in self._root_dependencies(self.dg) if node["rel"] == "SBJ"]
     
     def _find_grammaticality(self):
         subject_tag = self.subject[0]["tag"]
