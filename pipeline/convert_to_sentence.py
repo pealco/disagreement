@@ -52,13 +52,16 @@ class Sentence(object):
             similarity = subject_synset.wup_similarity(intervenor_synset)
             return sentence, (grammaticality, similarity, subject, intervenor) 
         except:
-            return False
+            return None
     
     def _find_intervenor(self):
         
         subject_deps = self.subject[0]['deps']
         prepositions = [self.dg.get_by_address(dep) for dep in subject_deps if self.dg.get_by_address(dep)['tag'] == 'IN']
-        first_prep = prepositions[0]
+        try:
+            first_prep = prepositions[0]
+        except IndexError:
+            return None
         intervenor = self.dg.get_by_address(first_prep['deps'][0])
         return intervenor
     
