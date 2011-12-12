@@ -5,10 +5,10 @@ Pedro Alcocer
 Convert DirectedGraphs to Sentence objects
 Call with:
 dumbo start convert_to_sentence.py /
-    -input /user/pealco/wikipedia_split_parsed_deduped_dgs  
-    -output /user/pealco/disagreement_sentence_objects 
+    -input /user/pealco/wikipedia_split_parsed_deduped_dgs /
+    -output /user/pealco/disagreement_sentence_objects /
     -overwrite yes -hadoop h -memlimit 4294967296
-""""
+"""
 
 import os, sys
 from glob import glob
