@@ -4,14 +4,15 @@ Pedro Alcocer
 12/11/2011
 Convert DirectedGraphs to Sentence objects
 Call with:
-dumbo start convert_to_sentence.py /
-    -input /user/pealco/wikipedia_split_parsed_deduped_dgs /
-    -output /user/pealco/disagreement_sentence_objects /
+dumbo start convert_to_sentence.py \
+    -input /user/pealco/wikipedia_split_parsed_deduped_dgs \
+    -output /user/pealco/disagreement_sentence_objects \
     -overwrite yes -hadoop h -memlimit 4294967296
 """
 
 import os, sys
 from glob import glob
+import re
 
 sys.path += glob("/fs/clip-software/python-contrib-2.7.1.0/lib/python2.7/site-packages/*.egg")
 sys.path.append("/fs/clip-software/python-contrib-2.7.1.0/lib/python2.7/site-packages")
