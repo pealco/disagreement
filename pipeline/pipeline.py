@@ -27,15 +27,15 @@ nltk.data.path += ["/fs/clip-software/nltk-2.0b9-data"]
 
 ## Constants.
 
-MAX_LENGTH = 20
-VERBS = ["is", "are", "was", "were"]
-
 NUMBER = {  "VBZ" : "SG",
             "VBP" : "PL",
             "VB"  : "PL",
             "NN"  : "SG",
             "NNS" : "PL"
 }
+
+MAX_LENGTH = 20
+VERBS = ["is", "are", "was", "were"]
 
 STOPWORDS = ["number", "majority", "minority", "variety", "percent", 
                 "total", "none", "pair", "part", "km", "mm",
@@ -52,6 +52,63 @@ STOPWORDS = ["number", "majority", "minority", "variety", "percent",
 ]
 
 ### Function composition.
+
+class Sentence(object):
+    def __init__(self, article, dg):
+        
+        self.punct_re = re.compile(r'\s([,\.;\?])')
+
+        self.dg = dg    
+        self.sentence = self._plaintext()
+        self.subject = self._find_subject()
+        self.intervenor = self._find_intervenor()
+        self.grammatical = self._find_grammaticality()
+        
+        def _plaintext(self):
+            s = " ".join([node["word"] for node in self.dg.nodelist[1:]])
+            self.sentence = re.sub(self.punct_re, r'\g<1>', s)
+        
+        def wup_similarity(self):
+            """Compute Wu-Palmer similarity."""
+            try:
+                subject_synset = wn.synsets(self.subject)[0]
+                intervenor_synset = wn.synsets(self.intervenor)[0]
+                similarity = subject_synset.wup_similarity(intervenor_synset)
+                return sentence, (grammaticality, similarity, subject, intervenor) 
+            except:
+                return False
+        
+        def _find_intervenor(self):
+            
+            subject_deps = self.subject[0]['deps']
+            prepositions = [self.dg.get_by_address(dep) for dep in subject_deps if self.dg.get_by_address(dep)['tag'] == 'IN']
+            first_prep = prepositions[0]
+            intervenor = self.dg.get_by_address(first_prep['deps'][0])
+            return intervenor
+        
+        def _root_dependencies(dg): 
+            return [dg.get_by_address(node) for node in dg.root["deps"]]
+
+        def _dependencies(dg, node): 
+            return [dg.get_by_address(dep) for dep in dg.get_by_address(node["address"])["deps"]]
+
+        def _find_subject(self):
+            return [node for node in root_dependencies(self.dg) if node["rel"] == "SBJ"]
+        
+        def _find_grammaticality(self):
+            subject_tag = self.subject[0]["tag"]
+            verb = self.dg.root
+            verb_tag = self.dg.root["tag"]
+
+            if subject_tag in NUMBER and verb_tag in NUMBER:
+                if NUMBER[subject_tag] == NUMBER[verb_tag]:
+                    self.grammatical = True
+                elif NUMBER[subject_tag] != NUMBER[verb_tag]:
+                    self.grammatical = False
+        
+        def __str__(self):
+            return self.sentence
+        
 
 class _compfunc(partial):
     def __add__(self, y):
@@ -86,13 +143,13 @@ def find_subject(dg):
 def plaintext(dg):
     return " ".join([node["word"] for node in dg.nodelist[1:]])
 
-def find_intervener(sentence_dg):
+def find_intervenor(sentence_dg):
     subject = find_subject(sentence_dg)
     subject_deps = subject[0]['deps']
     prepositions = [sentence_dg.get_by_address(dep) for dep in subject_deps if sentence_dg.get_by_address(dep)['tag'] == 'IN']
     first_prep = prepositions[0]
-    intervener = sentence_dg.get_by_address(first_prep['deps'][0])
-    return intervener
+    intervenor = sentence_dg.get_by_address(first_prep['deps'][0])
+    return intervenor
 
 def content_filter(string, attribute='word', scope='sentence'):
     
@@ -115,8 +172,6 @@ def content_filter(string, attribute='word', scope='sentence'):
     return filter_
 
 ### Content filters
-
-
 
 def stopword_filter(data):
     filters = [content_filter(word) for word in STOPWORDS]
@@ -144,14 +199,14 @@ def correct_tags_filter(data):
     subject = find_subject(sentence_dg)
     subject_tag = subject[0]["tag"]
     try:
-        intervener = find_intervener(sentence_dg)
+        intervenor = find_intervenor(sentence_dg)
     except IndexError:
         return False
-    intervener_tag = intervener["tag"]
+    intervenor_tag = intervenor["tag"]
     verb = sentence_dg.root
     verb_tag = sentence_dg.root["tag"]
 
-    if subject_tag in NUMBER and verb_tag in NUMBER and intervener_tag in NUMBER:
+    if subject_tag in NUMBER and verb_tag in NUMBER and intervenor_tag in NUMBER:
         return article, sentence_dg
 
 @composable
@@ -203,11 +258,11 @@ def keep_plural_intervenors(data):
     article, sentence_dg = data
     
     try:
-        intervener = find_intervener(sentence_dg)
+        intervenor = find_intervenor(sentence_dg)
     except IndexError:
         return False
         
-    if NUMBER[intervener['tag']] == "PL":
+    if NUMBER[intervenor['tag']] == "PL":
         return article, sentence_dg    
 
 @composable
@@ -246,7 +301,7 @@ def find_agreement(data):
     if subject_tag in NUMBER and verb_tag in NUMBER:
         if NUMBER[subject_tag] == NUMBER[verb_tag]:
             if NUMBER[verb_tag] == 'SG':
-                return "GRAM", sentence_dg
+                return "GRAM", (article, sentence_dg)
         elif NUMBER[subject_tag] != NUMBER[verb_tag]:
             if NUMBER[verb_tag] == 'PL':
                 return  "UNGRAM", sentence_dg
@@ -259,32 +314,32 @@ def convert_to_plaintext(data):
     return key, plaintext(sentence_dg)
 
 @composable
-def subject_intervener_pairs(data):
+def subject_intervenor_pairs(data):
     key, sentence_dg = data
     
     subject = find_subject(sentence_dg)[0]['word']
     
     try:
-        intervener = find_intervener(sentence_dg)['word']
+        intervenor = find_intervenor(sentence_dg)['word']
     except IndexError:
         return False
     
     sentence = plaintext(sentence_dg)
     
-    #return (subject, intervener), sentence
-    return key, (subject, intervener, plaintext(sentence_dg))
+    #return (subject, intervenor), sentence
+    return key, (subject, intervenor, plaintext(sentence_dg))
 
 @composable
 def compute_similarity(data):
     #brown_ic = wordnet_ic.ic('ic-brown.dat')
     grammaticality, triplet = data
-    subject, intervener, sentence = triplet
+    subject, intervenor, sentence = triplet
     
     try:
         subject_synset = wn.synsets(subject)[0]
-        intervener_synset = wn.synsets(intervener)[0]
-        similarity = subject_synset.wup_similarity(intervener_synset)
-        return sentence, (grammaticality, similarity, subject, intervener) 
+        intervenor_synset = wn.synsets(intervenor)[0]
+        similarity = subject_synset.wup_similarity(intervenor_synset)
+        return sentence, (grammaticality, similarity, subject, intervenor) 
     except:
         return False
         
@@ -306,7 +361,7 @@ def pipeline(article, sentence_dg):
                       keep_singular_subjects,
                       keep_plural_intervenors,
                       find_agreement,
-                      subject_intervener_pairs,
+                      subject_intervenor_pairs,
                       compute_similarity]
     
     composed_pipeline = compose(pipeline_steps)
