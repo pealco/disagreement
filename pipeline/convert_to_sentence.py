@@ -62,7 +62,7 @@ class Sentence(object):
         intervenor = self.dg.get_by_address(first_prep['deps'][0])
         return intervenor
     
-    def _root_dependencies(dg): 
+    def _root_dependencies(self, dg): 
         return [dg.get_by_address(node) for node in dg.root["deps"]]
     
     def _dependencies(dg, node): 
