@@ -29,14 +29,16 @@ from collections import defaultdict
 nltk.data.path += ["/fs/clip-software/nltk-2.0b9-data"]
 from nltk.corpus import wordnet as wn
 
-class Sentence(object):
-    
-    self.NUMBER = {  "VBZ" : "SG",
+NUMBER = { "VBZ" : "SG",
                 "VBP" : "PL",
                 "VB"  : "PL",
                 "NN"  : "SG",
-                "NNS" : "PL"
-    }
+                "NNS" : "PL",
+}
+
+class Sentence(object):
+    
+
     
     def __init__(self, article, dg):
         
@@ -87,10 +89,10 @@ class Sentence(object):
         verb = self.dg.root
         verb_tag = self.dg.root["tag"]
     
-        if subject_tag in self.NUMBER and verb_tag in self.NUMBER:
-            if self.NUMBER[subject_tag] == self.NUMBER[verb_tag]:
+        if subject_tag in NUMBER and verb_tag in NUMBER:
+            if NUMBER[subject_tag] == NUMBER[verb_tag]:
                 self.grammatical = True
-            elif self.NUMBER[subject_tag] != self.NUMBER[verb_tag]:
+            elif NUMBER[subject_tag] != NUMBER[verb_tag]:
                 self.grammatical = False
     
     def __str__(self):
