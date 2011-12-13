@@ -102,7 +102,7 @@ class Sentence(object):
         return self.sentence
             
 def mapper(article, dg):
-    s = Sentence(article, dg), ''
+    s = Sentence(article, dg)
     yield hashlib.sha1(s.sentence), s
     
 
