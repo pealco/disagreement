@@ -122,7 +122,7 @@ def preposition_filter(data):
 def keep_singular_subjects(data):
     s_id, sentence = data
     
-    if NUMBER[sentence.subject['tag']] == 'SG':
+    if NUMBER[sentence.subject[0]['tag']] == 'SG':
         return s_id, sentence
     
 @composable
