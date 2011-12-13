@@ -197,7 +197,7 @@ def pipeline(article, sentence_dg):
     data = (article, sentence_dg)
     
     pipeline_steps = [remove_long_sentences,    # Filter out sentences whose length is greater than MAX_LENGTH.
-                      #select_verbs,             # Filter out sentences without approved verbs.
+                      select_verbs,             # Filter out sentences without approved verbs.
                       #correct_tags_filter,
                       #stopword_filter,          # Filter out sentences that contain words in the stopword list.
                       #composed_content_filters,
