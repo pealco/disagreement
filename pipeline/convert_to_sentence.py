@@ -103,7 +103,8 @@ class Sentence(object):
             
 def mapper(article, dg):
     s = Sentence(article, dg)
-    yield hashlib.sha1(s.sentence), s
+    h = hashlib.sha1(s.sentence)
+    yield h, s
     
 
 if __name__ == '__main__':
