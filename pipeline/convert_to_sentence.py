@@ -100,7 +100,8 @@ class Sentence(object):
         return self.sentence
             
 def mapper(article, dg):
-    yield Sentence(article, dg), ''
+    s = Sentence(article, dg), ''
+    yield s.article, s
     
 
 if __name__ == '__main__':
