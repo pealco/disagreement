@@ -9,6 +9,7 @@ class Sentence(object):
         self.subject = self._find_subject()
         self.intervenor = self._find_intervenor()
         self.grammatical = self._find_grammaticality()
+        self.wup_similarity = self._wup_similarity()
         
     def _plaintext(self):
         s = " ".join([node["word"] for node in self.dg.nodelist[1:]])
@@ -20,7 +21,7 @@ class Sentence(object):
             subject_synset = wn.synsets(self.subject)[0]
             intervenor_synset = wn.synsets(self.intervenor)[0]
             similarity = subject_synset.wup_similarity(intervenor_synset)
-            return sentence, (grammaticality, similarity, subject, intervenor) 
+            return similarity
         except:
             return None
     
