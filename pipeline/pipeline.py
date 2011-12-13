@@ -6,6 +6,7 @@ Call with:
 dumbo start pipeline.py \
    -input /user/pealco/wikipedia_split_parsed_deduped_dgs \
    -output /user/pealco/disagreement_subj_int_pairs \
+   -file sentence.py \
    -overwrite yes -hadoop h -memlimit 4294967296 
 """
 
