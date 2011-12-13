@@ -100,8 +100,8 @@ def wordnet_filter(data):
     """Returns only sentence with critical words that are in wordnet."""    
     
     s_id, sentence = data
-        
-    if wn.synsets(sentence.subject) and wn.synsets(sentence.intervenor):
+    
+    if wn.synsets(sentence.subject[0]['word']) and wn.synsets(sentence.intervenor['word']):
         return s_id, sentence
 
 @composable
