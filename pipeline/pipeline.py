@@ -129,9 +129,9 @@ def stopword_filter(data):
 
 @composable
 def remove_long_sentences(data):
-    article, sentence_dg = data
-    if len(sentence_dg.nodelist) <= MAX_LENGTH:
-        return article, sentence_dg
+    s_id, sentence = data
+    if len(sentence.dg.nodelist) <= MAX_LENGTH:
+        return s_id, sentence
 
 @composable
 def select_verbs(data):
