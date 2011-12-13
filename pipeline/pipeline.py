@@ -4,8 +4,8 @@ May 9, 2011
 Finding agreement errors in Wikipedia using Hadoop
 Call with:
 dumbo start pipeline.py \
-   -input /user/pealco/wikipedia_split_parsed_deduped_dgs \
-   -output /user/pealco/disagreement_subj_int_pairs \
+   -input /user/pealco/disagreement_sentence_objects \
+   -output /user/pealco/disagreement_target_sentences \
    -file sentence.py \
    -overwrite yes -hadoop h -memlimit 4294967296 
 """
