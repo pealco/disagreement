@@ -202,11 +202,11 @@ def pipeline(article, sentence_dg):
                       select_verbs,             # Filter out sentences without approved verbs.
                       correct_tags_filter,
                       stopword_filter,          # Filter out sentences that contain words in the stopword list.
-                      #composed_content_filters,
-                      #root_is_verb_filter,      # Filter out sentences whose root node is a not a verb.
-                      #post_verb_plural_filter,
-                      #wordnet_filter,
-                      #preposition_filter,
+                      composed_content_filters,
+                      root_is_verb_filter,      # Filter out sentences whose root node is a not a verb.
+                      post_verb_plural_filter,
+                      wordnet_filter,
+                      preposition_filter,
                       #keep_singular_subjects,
                       #keep_plural_intervenors,
                       #find_agreement,
