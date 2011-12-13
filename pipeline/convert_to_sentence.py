@@ -54,7 +54,7 @@ class Sentence(object):
         
     def _plaintext(self):
         s = " ".join([node["word"] for node in self.dg.nodelist[1:]])
-        self.sentence = re.sub(self.punct_re, r'\g<1>', s)
+        return re.sub(self.punct_re, r'\g<1>', s)
     
     def wup_similarity(self):
         """Compute Wu-Palmer similarity."""
@@ -94,9 +94,9 @@ class Sentence(object):
     
         if subject_tag in NUMBER and verb_tag in NUMBER:
             if NUMBER[subject_tag] == NUMBER[verb_tag]:
-                self.grammatical = True
+                return True
             elif NUMBER[subject_tag] != NUMBER[verb_tag]:
-                self.grammatical = False
+                return False
     
     def __str__(self):
         return self.sentence
