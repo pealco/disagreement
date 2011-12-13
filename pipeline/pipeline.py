@@ -289,6 +289,13 @@ def compute_similarity(data):
         return sentence, (grammaticality, similarity, subject, intervenor) 
     except:
         return False
+
+@composable
+def print_sentence(data):
+    s_id, s = data
+    
+    return s_id, s.sentence
+    
         
 
 # Composed pipeline
@@ -309,7 +316,8 @@ def pipeline(article, sentence_dg):
                       #keep_plural_intervenors,
                       #find_agreement,
                       #subject_intervenor_pairs,
-                      #compute_similarity
+                      #compute_similarity,
+                      print_sentence,
                       ]
     
     composed_pipeline = compose(pipeline_steps)
