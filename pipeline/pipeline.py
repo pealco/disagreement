@@ -81,6 +81,8 @@ def correct_tags_filter(data):
     subject_tag = sentence.subject[0]["tag"]
     if sentence.intervenor:
         intervenor_tag = sentence.intervenor["tag"]
+    else:
+        return False
     verb = sentence.dg.root
     verb_tag = verb["tag"]
 
