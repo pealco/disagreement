@@ -20,6 +20,7 @@ from nltk.parse import DependencyGraph
 from nltk.corpus import wordnet as wn
 
 from dumbo.lib import *
+from sentence import Sentence
 
 ### Path updates.
 
