@@ -309,7 +309,8 @@ def pipeline(article, sentence_dg):
                       #keep_plural_intervenors,
                       #find_agreement,
                       #subject_intervenor_pairs,
-                      #compute_similarity]
+                      #compute_similarity
+                      ]
     
     composed_pipeline = compose(pipeline_steps)
     
