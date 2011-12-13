@@ -7,7 +7,8 @@ Call with:
 dumbo start convert_to_sentence.py \
     -input /user/pealco/wikipedia_split_parsed_deduped_dgs \
     -output /user/pealco/disagreement_sentence_objects \
-    -overwrite yes -hadoop h -memlimit 4294967296
+    -overwrite yes -hadoop h -memlimit 4294967296 \
+    -numreducetask 250
 """
 
 import os, sys
