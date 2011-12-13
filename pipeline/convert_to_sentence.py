@@ -23,6 +23,7 @@ from nltk.parse import DependencyGraph
 
 from dumbo.lib import *
 from collections import defaultdict
+import hashlib
 
 
 ### Path updates.
@@ -102,7 +103,7 @@ class Sentence(object):
             
 def mapper(article, dg):
     s = Sentence(article, dg), ''
-    yield s.article, s
+    yield hashlib.sha1(s.sentence), s
     
 
 if __name__ == '__main__':
