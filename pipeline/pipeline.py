@@ -102,17 +102,17 @@ def content_filter(string, attribute='word', scope='sentence'):
     
     @composable
     def filter_(data):
-        article, sentence_dg = data
+        s_id, sentence = data
     
         if scope == 'sentence':
-            matches = [node for node in sentence_dg.nodelist[1:] if node[attribute].lower() == string.lower()]
+            matches = [node for node in sentence.dg.nodelist[1:] if node[attribute].lower() == string.lower()]
             if not matches:
-                return article, sentence_dg
+                return s_id, sentence
         elif scope == 'preverb':
-            verb_address = sentence_dg.root["address"]
-            preverb = [sentence_dg.get_by_address(address)[attribute] for address in xrange(1, verb_address)]
+            verb_address = sentence.dg.root["address"]
+            preverb = [sentence.dg.get_by_address(address)[attribute] for address in xrange(1, verb_address)]
             if string not in preverb:
-                return article, sentence_dg
+                return s_id, sentence
         else:
             raise ValueError, "The scope '%s' is not defined. Defined scopes are 'sentence' and 'preverb'." % scope
     
@@ -136,97 +136,73 @@ def remove_long_sentences(data):
 
 @composable
 def select_verbs(data):
-    article, sentence_dg = data
-    if sentence_dg.root["word"] in VERBS:
-        return article, sentence_dg
+    s_id, sentence = data
+    if sentence.dg.root["word"] in VERBS:
+        return s_id, sentence
 
 @composable
 def correct_tags_filter(data):
-    article, sentence_dg = data
-    subject = find_subject(sentence_dg)
-    subject_tag = subject[0]["tag"]
-    try:
-        intervenor = find_intervenor(sentence_dg)
-    except IndexError:
-        return False
-    intervenor_tag = intervenor["tag"]
-    verb = sentence_dg.root
-    verb_tag = sentence_dg.root["tag"]
+    s_id, sentence = data
+    subject_tag = sentence.subject[0]["tag"]
+    if sentence.intervenor:
+        intervenor_tag = sentence.intervenor["tag"]
+    verb = sentence.dg.root
+    verb_tag = verb["tag"]
 
     if subject_tag in NUMBER and verb_tag in NUMBER and intervenor_tag in NUMBER:
-        return article, sentence_dg
-
-@composable
-def find_disagreement(data):
-    article, sentence_dg = data
-    subject = find_subject(sentence_dg)
-    subject_tag = subject[0]["tag"]
-    verb = sentence_dg.root
-    verb_tag = sentence_dg.root["tag"]
-    
-    if subject_tag in NUMBER and verb_tag in NUMBER:
-        if NUMBER[subject_tag] != NUMBER[verb_tag]:
-            return article, sentence_dg
+        return s_id, sentence
 
 @composable
 def wordnet_filter(data):
-    article, sentence_dg = data
-    """returns only sentence with subjects that are in wordnet."""    
-    subject = find_subject(sentence_dg)[0]["word"]
-    if wn.synsets(subject):
-        return article, sentence_dg
+    """Returns only sentence with critical words that are in wordnet."""    
+    
+    s_id, sentence = data
+        
+    if wn.synsets(sentence.subject) and wn.synsets(sentence.intervenor):
+        return s_id, sentence
 
 @composable
 def root_is_verb_filter(data):
     """Makes sure that the root is a verb."""
-    article, sentence_dg = data
-    if sentence_dg.root['tag'][0] == 'V':
-        return article, sentence_dg
+    s_id, sentence = data
+    if sentence.dg.root['tag'][0] == 'V':
+        return s_id, sentence
 
 @composable
 def preposition_filter(data):
-    article, sentence_dg = data
-    subject = find_subject(sentence_dg)
-    subject_deps = subject[0]['deps']
-    if any([sentence_dg.get_by_address(dep)['tag'] == 'IN' for dep in subject_deps]):
-        return article, sentence_dg
+    s_id, sentence = data
+    subject_deps = sentence.subject[0]['deps']
+    if any([sentence.dg.get_by_address(dep)['tag'] == 'IN' for dep in subject_deps]):
+        return s_id, sentence
 
 @composable
 def keep_singular_subjects(data):
-    article, sentence_dg = data
+    s_id, sentence = data
     
-    subject = find_subject(sentence_dg)[0]
-    
-    if NUMBER[subject['tag']] == 'SG':
-        return article, sentence_dg
+    if NUMBER[sentence.subject['tag']] == 'SG':
+        return s_id, sentence
     
 @composable
 def keep_plural_intervenors(data):
-    article, sentence_dg = data
+    s_id, sentence = data
     
-    try:
-        intervenor = find_intervenor(sentence_dg)
-    except IndexError:
-        return False
-        
-    if NUMBER[intervenor['tag']] == "PL":
-        return article, sentence_dg    
+    if sentence.intervenor:
+        if NUMBER[sentence.intervenor['tag']] == "PL":
+            return s_id, sentence
 
 @composable
 def post_verb_plural_filter(data):
-    article, sentence_dg = data
+    s_id, sentence = data
     
-    verb_address = sentence_dg.root["address"]
+    verb_address = sentence.dg.root["address"]
     post_verb_address = verb_address + 1
     
-    if post_verb_address == len(sentence_dg.nodelist):
+    if post_verb_address == len(sentence.dg.nodelist):
         return False
     
-    post_verb_word = sentence_dg.get_by_address(post_verb_address)
-    if post_verb_word['tag'] != 'NNS':
-        return article, sentence_dg
-    if post_verb_word['word'] != '.':
-        return article, sentence_dg
+    post_verb_word = sentence.dg.get_by_address(post_verb_address)
+    if post_verb_word['tag'] != 'NNS' and post_verb_word['word'] != '.':
+        return s_id, sentence
 
 content_filters = [
     content_filter('you', 'word', scope='preverb'),
@@ -236,24 +212,6 @@ content_filters = [
 composed_content_filters = compose(content_filters)
 
 # Output converters
-
-@composable
-def find_agreement(data):
-    article, sentence_dg = data
-    subject = find_subject(sentence_dg)
-    subject_tag = subject[0]["tag"]
-    verb = sentence_dg.root
-    verb_tag = sentence_dg.root["tag"]
-    
-    if subject_tag in NUMBER and verb_tag in NUMBER:
-        if NUMBER[subject_tag] == NUMBER[verb_tag]:
-            if NUMBER[verb_tag] == 'SG':
-                return "GRAM", (article, sentence_dg)
-        elif NUMBER[subject_tag] != NUMBER[verb_tag]:
-            if NUMBER[verb_tag] == 'PL':
-                return  "UNGRAM", sentence_dg
-            
-            
 
 @composable
 def convert_to_plaintext(data):
