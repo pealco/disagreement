@@ -29,74 +29,7 @@ from sentence import Sentence
 
 nltk.data.path += ["/fs/clip-software/nltk-2.0b9-data"]
 
-## Constants.
-
-NUMBER = {  "VBZ" : "SG",
-            "VBP" : "PL",
-            "VB"  : "PL",
-            "NN"  : "SG",
-            "NNS" : "PL"
-}
-
-MAX_LENGTH = 20
-VERBS = ["is", "are", "was", "were"]
-
-STOPWORDS = ["number", "majority", "minority", "variety", "percent", 
-                "total", "none", "pair", "part", "km", "mm",
-                "species", "series", "variety", "rest", "percentage",
-                "fish", "deer", "cattle", "sheep", "proginy",
-                "first", "second", "third", "fourth", "fifth", "sixth", 
-                "seventh", "eighth", "ninth", "tenth", "quarter",
-                "politics", "acoustics", "data", "media", "headquarters",
-                "range", "group", "kind", "half", "portion", "economics",
-                "lot", "lots", "remainder", "amount", "host", "set", "list",
-                "minimum", "maximum", "family", "handful", "bulk", "class",
-                "couple", "type", "another", "average",
-                ',', ':', '$', '?', '"', '%',
-]
-
-### Function composition.
-
-class _compfunc(partial):
-    def __add__(self, y):
-        f = lambda *args, **kwargs: y(self.func(*args, **kwargs)) 
-        return _compfunc(f)
-
-def composable(f):
-    return _compfunc(fail_gracefully(f))
-    
-def compose(functions):
-    return reduce(lambda x, y: x + y, functions)
-
-def fail_gracefully(func):
-    def wrapper(data):
-        if data:
-            return func(data)
-        else:
-            return False
-    return wrapper
-    
 ### Helper functions.
-
-def root_dependencies(dg): 
-    return [dg.get_by_address(node) for node in dg.root["deps"]]
-
-def dependencies(graph, node): 
-    return [graph.get_by_address(dep) for dep in graph.get_by_address(node["address"])["deps"]]
-
-def find_subject(dg):
-    return [node for node in root_dependencies(dg) if node["rel"] == "SBJ"]
-
-def plaintext(dg):
-    return " ".join([node["word"] for node in dg.nodelist[1:]])
-
-def find_intervenor(sentence_dg):
-    subject = find_subject(sentence_dg)
-    subject_deps = subject[0]['deps']
-    prepositions = [sentence_dg.get_by_address(dep) for dep in subject_deps if sentence_dg.get_by_address(dep)['tag'] == 'IN']
-    first_prep = prepositions[0]
-    intervenor = sentence_dg.get_by_address(first_prep['deps'][0])
-    return intervenor
 
 def content_filter(string, attribute='word', scope='sentence'):
     
