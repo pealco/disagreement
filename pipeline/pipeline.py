@@ -64,6 +64,12 @@ def stopword_filter(data):
 ### Structure filters
 
 @composable
+def all_present_filter(data):
+    s_id, sentence = data
+    if sentence.subject and sentence.intervenor:
+        return s_id, sentence
+
+@composable
 def remove_long_sentences(data):
     s_id, sentence = data
     if len(sentence.dg.nodelist) <= MAX_LENGTH:
