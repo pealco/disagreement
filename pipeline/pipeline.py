@@ -16,14 +16,14 @@ from glob import glob
 sys.path += glob("/fs/clip-software/python-contrib-2.7.1.0/lib/python2.7/site-packages/*.egg")
 sys.path.append("/fs/clip-software/python-contrib-2.7.1.0/lib/python2.7/site-packages")
 
-from functools import partial
-
 import nltk
 from nltk.parse import DependencyGraph
 from nltk.corpus import wordnet as wn
 
 from dumbo.lib import *
-from sentence import Sentence
+from sentence import *
+from funccomp import *
+from constants import *
 
 ### Path updates.
 
