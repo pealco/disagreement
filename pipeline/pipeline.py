@@ -55,8 +55,7 @@ def content_filter(string, attribute='word', scope='sentence'):
     """
     
     @composable
-    def filter_(data):
-        s_id, sentence = data
+    def filter_(s_id, sentence):
     
         if scope == 'sentence':
             matches = [node for node in sentence.dg.nodelist[1:] if node[attribute].lower() == string.lower()]
@@ -74,7 +73,7 @@ def content_filter(string, attribute='word', scope='sentence'):
 
 ### Content filters
 
-def stopword_filter(data):
+def stopword_filter(s_id, sentence):
     """
     Only sentences that do not contain words in `STOPWORDS` should be emitted.
     """
@@ -82,48 +81,45 @@ def stopword_filter(data):
     filters = [content_filter(word) for word in STOPWORDS]
         
     composed_stopword_filter = compose(filters)
-    return composed_stopword_filter(data)
+    return composed_stopword_filter(s_id, sentence)
 
 ### Structure filters
 
 @composable
-def all_present_filter(data):
+def all_present_filter(s_id, sentence):
     """
     Only sentences for which a subject and an intervenor were detected should be
     emitted.
     """
-    s_id, sentence = data
+
     if sentence.subject and sentence.intervenor:
         return s_id, sentence
 
 @composable
-def remove_long_sentences(data):
+def remove_long_sentences(s_id, sentence):
     """
     Only sentences with a maximum length of `MAX_LENGTH` should be emitted.
     """
     
-    s_id, sentence = data
     if len(sentence.dg.nodelist) <= MAX_LENGTH:
         return s_id, sentence
 
 @composable
-def select_verbs(data):
+def select_verbs(s_id, sentence):
     """
     Only verbs that are in `VERBS` should be emitted.
     """
     
-    s_id, sentence = data
     if sentence.dg.root["word"] in VERBS:
         return s_id, sentence
 
 @composable
-def correct_tags_filter(data):
+def correct_tags_filter(s_id, sentence):
     """
     Only sentences whose subject, verb, and intervenor have part of speech tags
     that are in `NUMBER` should be emitted.
     """
     
-    s_id, sentence = data
     subject_tag = sentence.subject[0]["tag"]
     if sentence.intervenor:
         intervenor_tag = sentence.intervenor["tag"]
@@ -136,65 +132,57 @@ def correct_tags_filter(data):
         return s_id, sentence
 
 @composable
-def wordnet_filter(data):
+def wordnet_filter(s_id, sentence):
     """
     Only sentences whose subjects and intervenors have synsets in 
     [Wordnet](http://wordnet.princeton.edu/) should be emitted.
     """
     
-    s_id, sentence = data
-    
     if wn.synsets(sentence.subject[0]['word']) and wn.synsets(sentence.intervenor['word']):
         return s_id, sentence
 
 @composable
-def root_is_verb_filter(data):
+def root_is_verb_filter(s_id, sentence):
     """
     Only sentences who root node in their dependency graph representation is
     tagged as a verb should be emitted.
     """
     
-    s_id, sentence = data
     if sentence.dg.root['tag'][0] == 'V':
         return s_id, sentence
 
 @composable
-def preposition_filter(data):
+def preposition_filter(s_id, sentence):
     """
     Only sentences in which the head of subject has dependencies that are
     tagged as prepositions will be emitted.
     """
-    s_id, sentence = data
+    
     subject_deps = sentence.subject[0]['deps']
     if any([sentence.dg.get_by_address(dep)['tag'] == 'IN' for dep in subject_deps]):
         return s_id, sentence
 
 @composable
-def keep_singular_subjects(data):
+def keep_singular_subjects(s_id, sentence):
     """
     Only sentences with singular number on the subject are emitted.
     """
-    
-    s_id, sentence = data
     
     if NUMBER[sentence.subject[0]['tag']] == 'SG':
         return s_id, sentence
     
 @composable
-def keep_plural_intervenors(data):
+def keep_plural_intervenors(s_id, sentence):
     """
     Only sentences with plural number on the intervenor noun are emitted.
     """
-    s
-    s_id, sentence = data
     
     if sentence.intervenor:
         if NUMBER[sentence.intervenor['tag']] == "PL":
             return s_id, sentence
 
 @composable
-def post_verb_plural_filter(data):
-    s_id, sentence = data
+def post_verb_plural_filter(s_id, sentence):
     
     verb_address = sentence.dg.root["address"]
     post_verb_address = verb_address + 1
@@ -216,17 +204,15 @@ composed_content_filters = compose(content_filters)
 # Output converters
 
 @composable
-def print_sentence(data):
-    s_id, s = data
+def print_sentence(s_id, sentence):
     
-    return s_id, s.sentence
+    return s_id, sentence.sentence
     
         
 
 # Composed pipeline
 
-def pipeline(article, sentence_dg):
-    data = (article, sentence_dg)
+def pipeline(s_id, sentence):
     
     pipeline_steps = [
                       all_present_filter,
@@ -245,7 +231,7 @@ def pipeline(article, sentence_dg):
     
     composed_pipeline = compose(pipeline_steps)
     
-    result = composed_pipeline(data)
+    result = composed_pipeline(s_id, sentence)
     
     if result:
         yield result
