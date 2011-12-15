@@ -69,24 +69,41 @@ def stopword_filter(data):
 
 @composable
 def all_present_filter(data):
+    """
+    Only sentences for which a subject and an intervenor were detected should be
+    emitted.
+    """
     s_id, sentence = data
     if sentence.subject and sentence.intervenor:
         return s_id, sentence
 
 @composable
 def remove_long_sentences(data):
+    """
+    Only sentences with a maximum length of `MAX_LENGTH` should be emitted.
+    """
+    
     s_id, sentence = data
     if len(sentence.dg.nodelist) <= MAX_LENGTH:
         return s_id, sentence
 
 @composable
 def select_verbs(data):
+    """
+    Only verbs that are in `VERBS` should be emitted.
+    """
+    
     s_id, sentence = data
     if sentence.dg.root["word"] in VERBS:
         return s_id, sentence
 
 @composable
 def correct_tags_filter(data):
+    """
+    Only sentences whose subject, verb, and intervenor have part of speech tags
+    that are in `NUMBER` should be emitted.
+    """
+    
     s_id, sentence = data
     subject_tag = sentence.subject[0]["tag"]
     if sentence.intervenor:
@@ -101,7 +118,10 @@ def correct_tags_filter(data):
 
 @composable
 def wordnet_filter(data):
-    """Returns only sentence with critical words that are in wordnet."""    
+    """
+    Only sentences whose subjects and intervenors have synsets in 
+    [Wordnet](http://wordnet.princeton.edu/) should be emitted.
+    """
     
     s_id, sentence = data
     
@@ -124,6 +144,10 @@ def preposition_filter(data):
 
 @composable
 def keep_singular_subjects(data):
+    """
+    Only sentences with singular number on the subject are emitted.
+    """
+    
     s_id, sentence = data
     
     if NUMBER[sentence.subject[0]['tag']] == 'SG':
@@ -131,6 +155,10 @@ def keep_singular_subjects(data):
     
 @composable
 def keep_plural_intervenors(data):
+    """
+    Only sentences with plural number on the intervenor noun are emitted.
+    """
+    s
     s_id, sentence = data
     
     if sentence.intervenor:
