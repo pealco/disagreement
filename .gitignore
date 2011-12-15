@@ -6,3 +6,5 @@ corpora_and_freqs/.Rapp.history
 *.pyc
 rater/*
 pipeline/docs/*
+data.tb
+disagreement_target_sentences/*
