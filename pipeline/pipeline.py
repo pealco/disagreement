@@ -6,12 +6,12 @@
 Call with:
 
     dumbo start pipeline.py \
-    -input /user/pealco/disagreement_sentence_objects \
-    -output /user/pealco/disagreement_target_sentences \
-    -file sentence.py \
-    -file funccomp.py \
-    -file constants.py \
-    -overwrite yes -hadoop h -memlimit 4294967296
+        -input /user/pealco/disagreement_sentence_objects \
+        -output /user/pealco/disagreement_target_sentences \
+        -file sentence.py \
+        -file funccomp.py \
+        -file constants.py \
+        -overwrite yes -hadoop h -memlimit 4294967296
     
 Every filter present in the pipeline is decorated by the `composable` decorator.
 
