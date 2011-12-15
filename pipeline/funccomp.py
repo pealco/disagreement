@@ -16,5 +16,5 @@ def fail_gracefully(func):
         if args[0] is False:
             return False
         else:
-            return False
+            return func(data)
     return wrapper
