@@ -14,7 +14,7 @@ def compose(functions):
 
 def fail_gracefully(func):
     def wrapper(*args):
-        if args[0] == (0, False):
+        if args == (0, False):
             return (0, False)
         else:
             return func(*args)

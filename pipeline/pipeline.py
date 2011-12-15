@@ -233,7 +233,7 @@ def pipeline(s_id, sentence):
     
     result = composed_pipeline(s_id, sentence)
     
-    if result:
+    if result != (0, False):
         yield result
 
 ### Running in dumbo.
