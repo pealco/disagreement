@@ -183,7 +183,6 @@ def subject_intervenor_pairs(data):
 
 @composable
 def compute_similarity(data):
-    #brown_ic = wordnet_ic.ic('ic-brown.dat')
     grammaticality, triplet = data
     subject, intervenor, sentence = triplet
     
