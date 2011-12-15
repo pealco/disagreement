@@ -15,7 +15,7 @@ class Sentence(object):
         s = " ".join([node["word"] for node in self.dg.nodelist[1:]])
         return re.sub(self.punct_re, r'\g<1>', s)
     
-    def wup_similarity(self):
+    def _wup_similarity(self):
         """Compute Wu-Palmer similarity."""
         try:
             subject_synset = wn.synsets(self.subject)[0]

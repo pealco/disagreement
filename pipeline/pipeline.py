@@ -84,8 +84,6 @@ def stopword_filter(data):
     composed_stopword_filter = compose(filters)
     return composed_stopword_filter(data)
 
-### Structure filters
-
 @composable
 def all_present_filter(data):
     """
