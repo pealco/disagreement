@@ -185,7 +185,7 @@ def keep_plural_intervenors(data):
     """
     Only sentences with plural number on the intervenor noun are emitted.
     """
-    s
+
     s_id, sentence = data
     
     if sentence.intervenor:
