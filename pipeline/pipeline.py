@@ -189,40 +189,6 @@ composed_content_filters = compose(content_filters)
 # Output converters
 
 @composable
-def convert_to_plaintext(data):
-    key, sentence_dg = data
-    return key, plaintext(sentence_dg)
-
-@composable
-def subject_intervenor_pairs(data):
-    key, sentence_dg = data
-    
-    subject = find_subject(sentence_dg)[0]['word']
-    
-    try:
-        intervenor = find_intervenor(sentence_dg)['word']
-    except IndexError:
-        return False
-    
-    sentence = plaintext(sentence_dg)
-    
-    #return (subject, intervenor), sentence
-    return key, (subject, intervenor, plaintext(sentence_dg))
-
-@composable
-def compute_similarity(data):
-    grammaticality, triplet = data
-    subject, intervenor, sentence = triplet
-    
-    try:
-        subject_synset = wn.synsets(subject)[0]
-        intervenor_synset = wn.synsets(intervenor)[0]
-        similarity = subject_synset.wup_similarity(intervenor_synset)
-        return sentence, (grammaticality, similarity, subject, intervenor) 
-    except:
-        return False
-
-@composable
 def print_sentence(data):
     s_id, s = data
     
