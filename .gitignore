@@ -3,5 +3,6 @@ corpora_and_freqs/.Rapp.history
 *.txt
 *.csv
 *.tgz
+*.pyc
 rater/*
 pipeline/docs/*
