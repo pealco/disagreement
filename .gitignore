@@ -4,3 +4,4 @@ corpora_and_freqs/.Rapp.history
 *.csv
 *.tgz
 rater/*
+docs/*
