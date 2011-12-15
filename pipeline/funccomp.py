@@ -2,7 +2,7 @@ from functools import partial
 
 class _compfunc(partial):
     def __add__(self, y):
-        f = lambda *args, **kwargs: y(self.func(*args, **kwargs)) 
+        f = lambda *args, **kwargs: y(*self.func(*args, **kwargs)) 
         return _compfunc(f)
 
 def composable(f):
