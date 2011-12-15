@@ -6,7 +6,6 @@ May 9, 2011
 Finding agreement errors in Wikipedia using Hadoop
 
 Call with:
-   -input /user/pealco/disagreement_sentence_objects \
 
     dumbo start pipeline.py \
     -input /user/pealco/disagreement_sentence_objects \
