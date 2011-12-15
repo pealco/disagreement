@@ -12,9 +12,9 @@ def compose(functions):
     return reduce(lambda x, y: x + y, functions)
 
 def fail_gracefully(func):
-    def wrapper(*args):
-        if args[0] is False:
-            return False
-        else:
+    def wrapper(data):
+        if data:
             return func(data)
+        else:
+            return False
     return wrapper
