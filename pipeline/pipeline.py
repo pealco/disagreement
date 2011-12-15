@@ -1,9 +1,7 @@
 """
-Pedro Alcocer
+## Finding agreement errors in Wikipedia using Hadoop
 
-May 9, 2011
-
-Finding agreement errors in Wikipedia using Hadoop
+### Pedro Alcocer
 
 Call with:
 
@@ -13,7 +11,13 @@ Call with:
     -file sentence.py \
     -file funccomp.py \
     -file constants.py \
-    -overwrite yes -hadoop h -memlimit 4294967296 
+    -overwrite yes -hadoop h -memlimit 4294967296
+    
+Every filter present in the pipeline is decorated by the `composable` decorator.
+
+Every composable function will return `False` if it receives `False` as its 
+argument, bypassing all computation in the function and in the rest of the 
+pipeline. The composed mapper function will only emit non-`False` values.
 """
 
 import os, sys
@@ -38,6 +42,17 @@ nltk.data.path += ["/fs/clip-software/nltk-2.0b9-data"]
 ### Helper functions.
 
 def content_filter(string, attribute='word', scope='sentence'):
+    """
+    This is a function factory that creates map-reduce compatible filter 
+    functions. The function it returns looks at the attribute `attribute` for 
+    every node in the `scope`, checking whether the value of that attribute 
+    matches `string`.
+    
+    The only valid values for the `scope` argument are "sentence" or "preverb". 
+    The former includes all the nodes in the sentence, while the latter includes 
+    only those that precede the root node (which is assumed to be the verb).
+    It defaults to "sentence".
+    """
     
     @composable
     def filter_(data):
@@ -60,6 +75,10 @@ def content_filter(string, attribute='word', scope='sentence'):
 ### Content filters
 
 def stopword_filter(data):
+    """
+    Only sentences that do not contain words in `STOPWORDS` should be emitted.
+    """
+    
     filters = [content_filter(word) for word in STOPWORDS]
         
     composed_stopword_filter = compose(filters)
@@ -130,13 +149,21 @@ def wordnet_filter(data):
 
 @composable
 def root_is_verb_filter(data):
-    """Makes sure that the root is a verb."""
+    """
+    Only sentences who root node in their dependency graph representation is
+    tagged as a verb should be emitted.
+    """
+    
     s_id, sentence = data
     if sentence.dg.root['tag'][0] == 'V':
         return s_id, sentence
 
 @composable
 def preposition_filter(data):
+    """
+    Only sentences in which the head of subject has dependencies that are
+    tagged as prepositions will be emitted.
+    """
     s_id, sentence = data
     subject_deps = sentence.subject[0]['deps']
     if any([sentence.dg.get_by_address(dep)['tag'] == 'IN' for dep in subject_deps]):
@@ -203,18 +230,17 @@ def pipeline(article, sentence_dg):
     
     pipeline_steps = [
                       all_present_filter,
-                      remove_long_sentences,    # Filter out sentences whose length is greater than MAX_LENGTH.
-                      select_verbs,             # Filter out sentences without approved verbs.
+                      remove_long_sentences,
+                      select_verbs,
                       correct_tags_filter,
-                      stopword_filter,          # Filter out sentences that contain words in the stopword list.
+                      stopword_filter,
                       composed_content_filters,
-                      root_is_verb_filter,      # Filter out sentences whose root node is a not a verb.
+                      root_is_verb_filter,
                       post_verb_plural_filter,
                       wordnet_filter,
                       preposition_filter,
                       keep_singular_subjects,
                       keep_plural_intervenors,
-                      #print_sentence,
                       ]
     
     composed_pipeline = compose(pipeline_steps)
@@ -223,6 +249,12 @@ def pipeline(article, sentence_dg):
     
     if result:
         yield result
+
+### Running in dumbo.
+
+"""
+This runs as a single map-reduce job. 
+"""
 
 if __name__ == '__main__':
     import dumbo
