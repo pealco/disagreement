@@ -239,8 +239,8 @@ def pipeline(article, sentence_dg):
                       post_verb_plural_filter,
                       wordnet_filter,
                       preposition_filter,
-#                      keep_singular_subjects,
-#                      keep_plural_intervenors,
+                      keep_singular_subjects,
+                      keep_plural_intervenors,
                       ]
     
     composed_pipeline = compose(pipeline_steps)
