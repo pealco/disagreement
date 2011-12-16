@@ -1,20 +1,20 @@
 ## Constants.
 
-NUMBER = {  "VBZ" : "SG",
-            "VBP" : "PL",
-            "VB"  : "PL",
-            "NN"  : "SG",
-            "NNS" : "PL"
+NUMBER = {"VBZ":  "SG",
+           "VBP": "PL",
+           "VB":  "PL",
+           "NN":  "SG",
+           "NNS": "PL"
 }
 
 MAX_LENGTH = 20
 VERBS = ["is", "are", "was", "were"]
 
-STOPWORDS = ["number", "majority", "minority", "variety", "percent", 
+STOPWORDS = ["number", "majority", "minority", "variety", "percent",
                 "total", "none", "pair", "part", "km", "mm",
                 "species", "series", "variety", "rest", "percentage",
                 "fish", "deer", "cattle", "sheep", "proginy",
-                "first", "second", "third", "fourth", "fifth", "sixth", 
+                "first", "second", "third", "fourth", "fifth", "sixth",
                 "seventh", "eighth", "ninth", "tenth", "quarter",
                 "politics", "acoustics", "data", "media", "headquarters",
                 "range", "group", "kind", "half", "portion", "economics",
