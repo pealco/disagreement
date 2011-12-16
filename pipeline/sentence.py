@@ -1,6 +1,9 @@
 import re
+import nltk
 from nltk.corpus import wordnet as wn
 from constants import NUMBER
+
+nltk.data.path += ["/fs/clip-software/nltk-2.0b9-data"]
 
 
 class Sentence(object):
