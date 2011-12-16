@@ -1,3 +1,6 @@
+import re
+from nltk.corpus import wordnet as wn
+from constants import NUMBER
 class Sentence(object):
 
     def __init__(self, article, dg):
