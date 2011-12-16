@@ -20,14 +20,13 @@ argument, bypassing all computation in the function and in the rest of the
 pipeline. The composed mapper function will only emit non-`False` values.
 """
 
-import os, sys
+import sys
 from glob import glob
 
 sys.path += glob("/fs/clip-software/python-contrib-2.7.1.0/lib/python2.7/site-packages/*.egg")
 sys.path.append("/fs/clip-software/python-contrib-2.7.1.0/lib/python2.7/site-packages")
 
 import nltk
-from nltk.parse import DependencyGraph
 from nltk.corpus import wordnet as wn
 
 from dumbo.lib import *
