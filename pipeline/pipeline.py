@@ -127,7 +127,7 @@ def correct_tags_filter(data):
     """
 
     s_id, sentence = data
-    subject_tag = sentence.subject[0]["tag"]
+    subject_tag = sentence.subject["tag"]
     if sentence.intervenor:
         intervenor_tag = sentence.intervenor["tag"]
     else:
@@ -148,7 +148,7 @@ def wordnet_filter(data):
 
     s_id, sentence = data
 
-    if wn.synsets(sentence.subject[0]['word']) and wn.synsets(sentence.intervenor['word']):
+    if wn.synsets(sentence.subject['word']) and wn.synsets(sentence.intervenor['word']):
         return s_id, sentence
 
 
@@ -171,7 +171,7 @@ def preposition_filter(data):
     tagged as prepositions will be emitted.
     """
     s_id, sentence = data
-    subject_deps = sentence.subject[0]['deps']
+    subject_deps = sentence.subject['deps']
     if any([sentence.dg.get_by_address(dep)['tag'] == 'IN' for dep in subject_deps]):
         return s_id, sentence
 
@@ -184,7 +184,7 @@ def keep_singular_subjects(data):
 
     s_id, sentence = data
 
-    if NUMBER[sentence.subject[0]['tag']] == 'SG':
+    if NUMBER[sentence.subject['tag']] == 'SG':
         return s_id, sentence
 
 
