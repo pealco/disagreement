@@ -33,7 +33,7 @@ class Sentence(object):
 
     def _find_intervenor(self):
 
-        subject_deps = self.subject[0]['deps']
+        subject_deps = self.subject['deps']
         prepositions = [self.dg.get_by_address(dep) for dep in subject_deps if self.dg.get_by_address(dep)['tag'] == 'IN']
         try:
             first_prep = prepositions[0]
@@ -53,7 +53,7 @@ class Sentence(object):
         return [node for node in self._root_dependencies(self.dg) if node["rel"] == "SBJ"][0]
 
     def _find_grammaticality(self):
-        subject_tag = self.subject[0]["tag"]
+        subject_tag = self.subject["tag"]
         verb_tag = self.verb["tag"]
 
         if subject_tag in NUMBER and verb_tag in NUMBER:
