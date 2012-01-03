@@ -11,6 +11,12 @@ dumbo start convert_to_sentence.py \
     -file constants.py \
     -overwrite yes -hadoop h -memlimit 4294967296 \
     -numreducetasks 100
+
+    After the job completes, you should run
+
+        hadoop jar /usr/lib/hadoop/contrib/streaming/hadoop-streaming-0.20.2-cdh3u1.jar dumptb /user/pealco/disagreement_target_sentences/part-00000 > data.tb
+
+    to convert the output into a typedbytes file.
 """
 
 import sys
