@@ -29,7 +29,7 @@ class Sentence(object):
             similarity = subject_synset.wup_similarity(intervenor_synset)
             return similarity
         except:
-            return None
+            return -1
 
     def _find_intervenor(self):
 
