@@ -15,7 +15,7 @@ class Sentence(object):
         self.intervenor = self._find_intervenor()
         self.verb = self.dg.root
         self.grammatical = self._find_grammaticality()
-        self.wup_similarity = self._wup_similarity()
+        self.similarity = self._wup_similarity()
 
     def _plaintext(self):
         s = " ".join([node["word"] for node in self.dg.nodelist[1:]])
