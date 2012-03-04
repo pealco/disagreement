@@ -26,6 +26,6 @@ STOPWORDS = ["number", "majority", "minority", "variety", "percent",
                 ',', ':', '$', '?', '"', '%',
 ]
 
-wordcounts_file = open("wordcounts.pkl")
+wordcounts_file = open("../data/wordcounts.pkl")
 WORDCOUNTS = pickle.load(wordcounts_file)
 wordcounts_file.close()
