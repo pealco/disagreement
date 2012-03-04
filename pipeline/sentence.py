@@ -15,9 +15,11 @@ class Sentence(object):
         self.subject = self._find_subject()
         self.intervenor = self._find_intervenor()
         self.verb = self.dg.root
+        self.rel_freq = self._relative_noun_frequency()
+
         self.grammatical = self._find_grammaticality()
         self.similarity = self._wup_similarity()
-        self.rel_freq = self._relative_noun_frequency()
+        
 
 
     def _plaintext(self):
