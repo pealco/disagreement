@@ -1,11 +1,11 @@
 import cPickle as pickle
 import typedbytes
 
-wordcount_file = open("../data/wordcount.tb", "rb")
-wordcount = typedbytes.PairedInput(wordcount_file)
+wordcounts_file = open("../data/wordcounts.tb", "rb")
+wordcounts = typedbytes.PairedInput(wordcounts_file)
 
-wordcount_dict = dict((word, count) for word, count in wordcount)
+wordcounts_dict = dict((word, count) for word, count in wordcounts)
 
 output = open("../data/wordcounts.pkl", "wb")
 
-pickle.dump(wordcount_dict, output, protocol=1)
+pickle.dump(wordcounts_dict, output, protocol=1)
