@@ -23,6 +23,7 @@ class Sentence(object):
 
     def similarity(self):
         """Compute Wu-Palmer similarity."""
+        print "sim"
         try:
             subject_synset = wn.synsets(self.subject['word'])[0]
             intervenor_synset = wn.synsets(self.intervenor['word'])[0]
