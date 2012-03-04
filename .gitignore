@@ -4,6 +4,8 @@ corpora_and_freqs/.Rapp.history
 *.csv
 *.tgz
 *.pyc
+*.tb
+*.pkl
 rater/*
 pipeline/docs/*
 data.tb
