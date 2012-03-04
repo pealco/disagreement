@@ -1,5 +1,7 @@
 ## Constants.
 
+import cPickle as pickle
+
 NUMBER = {"VBZ":  "SG",
            "VBP": "PL",
            "VB":  "PL",
@@ -23,3 +25,7 @@ STOPWORDS = ["number", "majority", "minority", "variety", "percent",
                 "couple", "type", "another", "average",
                 ',', ':', '$', '?', '"', '%',
 ]
+
+wordcounts_file = open("wordcounts.pkl")
+WORDCOUNTS = pickle.load(wordcounts_file)
+wordcounts_file.close()
