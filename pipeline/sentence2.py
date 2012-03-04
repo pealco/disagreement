@@ -15,18 +15,13 @@ class Sentence(object):
         self.subject = self._find_subject()
         self.intervenor = self._find_intervenor()
         self.verb = self.dg.root
-        self.rel_freq = self._relative_noun_frequency()
-
-        self.grammatical = self._find_grammaticality()
-        self.similarity = self._wup_similarity()
-        
 
 
     def _plaintext(self):
         s = " ".join([node["word"] for node in self.dg.nodelist[1:]])
         return re.sub(self.punct_re, r'\g<1>', s)
 
-    def _wup_similarity(self):
+    def similarity(self):
         """Compute Wu-Palmer similarity."""
         try:
             subject_synset = wn.synsets(self.subject)[0]
@@ -36,7 +31,7 @@ class Sentence(object):
         except:
             return -1
 
-    def _relative_noun_frequency(self):
+    def rel_freq(self):
 
         subject = self.subject['word'].lower()
         intervenor = self.intervenor['word'].lower()
@@ -68,7 +63,7 @@ class Sentence(object):
     def _find_subject(self):
         return [node for node in self._root_dependencies(self.dg) if node["rel"] == "SBJ"][0]
 
-    def _find_grammaticality(self):
+    def is_grammatical(self):
         subject_tag = self.subject["tag"]
         verb_tag = self.verb["tag"]
 

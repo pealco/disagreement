@@ -8,10 +8,10 @@ Call with:
     dumbo start pipeline.py \
         -input /user/pealco/disagreement_sentence_objects \
         -output /user/pealco/disagreement_target_sentences \
-        -file sentence.py \
+        -file sentence2.py \
         -file funccomp.py \
         -file constants.py \
-        -file ../data/wordcounts.pkl \
+        -file wordcounts.pkl \
         -overwrite yes -hadoop h -memlimit 4294967296
 
 Every filter present in the pipeline is decorated by the `composable` decorator.
@@ -31,7 +31,7 @@ import nltk
 from nltk.corpus import wordnet as wn
 
 from dumbo.lib import *
-from sentence import *
+from sentence2 import *
 from funccomp import *
 from constants import *
 
