@@ -35,8 +35,8 @@ class Sentence(object):
 
     def _relative_noun_frequency(self):
 
-        subject = self.subject.lower()
-        intervenor = self.intervenor.lower()
+        subject = self.subject['word'].lower()
+        intervenor = self.intervenor['word'].lower()
 
         subject_log_freq = log(WORDCOUNTS[subject])
         intervenor_log_freq = log(WORDCOUNTS[intervenor])
