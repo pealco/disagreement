@@ -1,6 +1,7 @@
 import re
 from nltk.corpus import wordnet as wn
-from constants import NUMBER
+from constants import NUMBER, WORDCOUNTS
+from math import log
 
 
 class Sentence(object):
@@ -14,8 +15,12 @@ class Sentence(object):
         self.subject = self._find_subject()
         self.intervenor = self._find_intervenor()
         self.verb = self.dg.root
+        self.rel_freq = self._relative_noun_frequency()
+
         self.grammatical = self._find_grammaticality()
         self.similarity = self._wup_similarity()
+        
+
 
     def _plaintext(self):
         s = " ".join([node["word"] for node in self.dg.nodelist[1:]])
@@ -30,6 +35,17 @@ class Sentence(object):
             return similarity
         except:
             return -1
+
+    def _relative_noun_frequency(self):
+
+        subject = self.subject['word'].lower()
+        intervenor = self.intervenor['word'].lower()
+
+        subject_log_freq = log(WORDCOUNTS[subject])
+        intervenor_log_freq = log(WORDCOUNTS[intervenor])
+        rel_freq = subject_log_freq / intervenor_log_freq
+
+        return rel_freq
 
     def _find_intervenor(self):
 
