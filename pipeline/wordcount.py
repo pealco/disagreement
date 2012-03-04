@@ -27,6 +27,9 @@ from collections import defaultdict
 
 nltk.data.path += ["/fs/clip-software/nltk-2.0b9-data"]
 from nltk.corpus import wordnet as wn
+from nltk.stem.wordnet import WordNetLemmatizer
+
+wnl = WordNetLemmatizer()
 
 
 def mapper(data):
@@ -37,6 +40,7 @@ def mapper(data):
     for article, dg in data:
         for node in dg.nodelist[1:]:
             word = node["word"].lower()
+            word = wnl.lemmatize(word)
             if wn.synsets(word):
                 counts[word] += 1
 
