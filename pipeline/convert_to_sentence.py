@@ -9,6 +9,7 @@ dumbo start convert_to_sentence.py \
     -output /user/pealco/disagreement_sentence_objects \
     -file sentence.py \
     -file constants.py \
+    -file wordcounts.pkl \
     -overwrite yes -hadoop h -memlimit 4294967296 \
     -numreducetasks 100
 
