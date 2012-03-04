@@ -8,7 +8,7 @@ Call with:
     dumbo start pipeline.py \
         -input /user/pealco/disagreement_sentence_objects \
         -output /user/pealco/disagreement_target_sentences \
-        -file sentence3.py \
+        -file sentence.py \
         -file funccomp.py \
         -file constants.py \
         -file wordcounts.pkl \
@@ -31,7 +31,7 @@ import nltk
 from nltk.corpus import wordnet as wn
 
 from dumbo.lib import *
-from sentence3 import *
+from sentence import *
 from funccomp import *
 from constants import *
 
