@@ -11,6 +11,7 @@ Call with:
         -file sentence.py \
         -file funccomp.py \
         -file constants.py \
+        -file ../data/wordcounts.pkl \
         -overwrite yes -hadoop h -memlimit 4294967296
 
 Every filter present in the pipeline is decorated by the `composable` decorator.
