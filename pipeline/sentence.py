@@ -1,6 +1,7 @@
 import re
 from nltk.corpus import wordnet as wn
 from constants import NUMBER, WORDCOUNTS
+from math import log
 
 
 class Sentence(object):
